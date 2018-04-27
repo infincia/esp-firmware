@@ -1,0 +1,15 @@
+[submodule "components/tarablessd1306"]
+	path = components/tarablessd1306
+	url = https://github.com/TaraHoleInIt/tarablessd1306.git
+[submodule "components/esp-si7021"]
+	path = components/esp-si7021
+	url = https://github.com/jessebraham/esp-si7021.git
+[submodule "components/max9744_espidf"]
+	path = components/max9744_espidf
+	url = git@github.com:infincia/max9744_espidf.git
+[submodule "components/homekit"]
+	path = components/homekit
+	url = https://github.com/younghyunjo/esp32-homekit.git
+[submodule "components/esp32-snippets"]
+	path = components/esp32-snippets
+	url = https://github.com/nkolban/esp32-snippets.git
