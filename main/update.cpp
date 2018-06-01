@@ -6,6 +6,7 @@
 #include "update.hpp"
 
 #include <c_semver.h>
+#include <JSON.h>
 
 static const char *TAG = "[Update]";
 
@@ -33,7 +34,7 @@ Update::Update(std::string& device_name, std::string& device_type, std::string& 
 device_name(device_name), 
 device_type(device_type),
 device_id(device_id),
-update_url("https://192.168.20.10:8443/firmware/firmware.bin") {
+update_url("https://192.168.20.10:8443/firmware/firmware.manifest") {
     ESP_LOGI(TAG, "init");
 
     xTaskCreate(&task_wrapper, "update_task", 8192, this, (tskIDLE_PRIORITY + 10),
@@ -123,11 +124,9 @@ bool Update::update(const char* url) {
     char user_agent[32];
     snprintf(user_agent, sizeof(user_agent), "%s/%s", this->device_name.c_str(), VERSION);
 
-    HTTPSClient http_version_check(user_agent, letsencrypt_chain_pem_start, timeout);
 
 
     struct semver_context current_version;
-    struct semver_context available_version;
 
     int32_t cres;
 
@@ -145,11 +144,54 @@ bool Update::update(const char* url) {
 
 
 
+    HTTPSClient http_manifest(user_agent, letsencrypt_chain_pem_start, timeout);
 
-    semver_init(&available_version, VERSION);
+    std::string available_version_s;
+    std::string firmware_url;
 
+    int res;
+    try {
+        memset(text, 0, TEXT_BUFFSIZE);
+
+        http_manifest.set_read_cb([&] (const char* buf, int length) {
+            memcpy(text, buf, length);
+        });
+
+        res = http_manifest.get(url);
+
+        if (res >= 500) {
+            throw std::runtime_error("server error");
+        } else if (res == 404) {
+            throw std::runtime_error("no update manifest found");
+        }
+        
+        std::string body(text);
+
+        auto m = JSON::parseObject(body);
+
+        available_version_s = m.getString("available_version");
+        firmware_url = m.getString("firmware_url");
+
+        JSON::deleteObject(m);
+
+        if (available_version_s.length() == 0) {
+            ESP_LOGI(TAG, "available_version key missing");
+            return false;
+        }
+        if (firmware_url.length() == 0) {
+            ESP_LOGI(TAG, "firmware_url key missing");
+            return false;
+        }
+    } catch (std::exception &ex) {
+        ESP_LOGI(TAG, "update failed: %s", ex.what());
+        return false;
+    }
+
+
+
+    struct semver_context available_version;
+    semver_init(&available_version, available_version_s.c_str());
     cres = semver_parse(&available_version);
-
     if (cres != SEMVER_PARSE_OK) {
         ESP_LOGI(TAG, "available_version check failed: %d", cres);
         semver_free(&current_version);
@@ -167,9 +209,9 @@ bool Update::update(const char* url) {
         return false;
     }
 
+
     HTTPSClient http(user_agent, letsencrypt_chain_pem_start, timeout);
 
-    int res;
     try {
         http.set_read_cb([&] (const char* buf, int length) {
             memset(ota_write_data, 0, BUFFSIZE);
@@ -183,14 +225,14 @@ bool Update::update(const char* url) {
             ESP_LOGD(TAG, "written %d", binary_file_length);
         });
 
-        res = http.get(url);
+        res = http.get(firmware_url.c_str());
         ESP_LOGI(TAG, "http request success: %d", res);
 
         #if defined(USE_ESP_TLS)
         if (res >= 500) {
             throw std::runtime_error("server error");
         } else if (res == 404) {
-            throw std::runtime_error("no update available");
+            throw std::runtime_error("firmware binary not found");
         } else if (res == 200) {
             while (true) {
                 memset(text, 0, TEXT_BUFFSIZE);
