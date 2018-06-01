@@ -38,7 +38,7 @@ private:
     uint8_t ota_write_data[BUFFSIZE + 1] = {0};
     
     /* an packet receive buffer */
-    char text[BUFFSIZE + 1] = {0};
+    char text[TEXT_BUFFSIZE + 1] = {0};
 };
 
 #endif /* UPDATE_H_ */
