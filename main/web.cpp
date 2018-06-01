@@ -272,7 +272,7 @@ device_type(device_type),
 device_id(device_id),
 port(port) {
     ESP_LOGD(TAG, "init");
-    xTaskCreate(&task_wrapper, "web_task", 16384, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
+    xTaskCreate(&task_wrapper, "web_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
     ESP_LOGD(TAG, "init done");
 }
 
