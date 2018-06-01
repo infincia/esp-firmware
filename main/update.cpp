@@ -202,7 +202,7 @@ bool Update::update(const char* url) {
     printf("major = %d, minor = %d, patch = %d\n", available_version.major, available_version.minor, available_version.patch);
 
 
-    if (available_version.major <= current_version.major && available_version.minor <= current_version.minor && available_version.patch && current_version.patch) {
+    if (available_version.major <= current_version.major && available_version.minor <= current_version.minor && available_version.patch <= current_version.patch) {
         ESP_LOGI(TAG, "no update available");
         semver_free(&current_version);
         semver_free(&available_version);
