@@ -214,9 +214,6 @@ bool Update::update(const char* url) {
 
     try {
         http.set_read_cb([&] (const char* buf, int length) {
-            memset(ota_write_data, 0, BUFFSIZE);
-
-            memcpy(ota_write_data, buf, length);
             err = esp_ota_write(update_handle, buf, length);
             if (err != ESP_OK) {
                 ESP_LOGI(TAG, "esp_ota_write: %d", err);
@@ -236,7 +233,6 @@ bool Update::update(const char* url) {
             #if defined(USE_ESP_TLS)
             while (true) {
                 memset(text, 0, TEXT_BUFFSIZE);
-                memset(ota_write_data, 0, BUFFSIZE);
 
                 int buff_len = http.read(text, TEXT_BUFFSIZE);
                 if (buff_len < 0) {
@@ -249,8 +245,7 @@ bool Update::update(const char* url) {
                     ESP_LOGI(TAG, "error: = %d", errno);
                     break;
                 } else if (buff_len > 0) {
-                    memcpy(ota_write_data, text, buff_len);
-                    err = esp_ota_write(update_handle, (const void *)ota_write_data, buff_len);
+                    err = esp_ota_write(update_handle, (const void *)text, buff_len);
                     if (err != ESP_OK) {
                         ESP_LOGI(TAG, "esp_ota_write: %d", err);
                         break;
