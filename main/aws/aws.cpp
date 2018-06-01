@@ -136,37 +136,44 @@ void AWS::task() {
     sp.disconnectHandler = nullptr;
 
 
-    rc = aws_iot_shadow_init(&mqttClient, &sp);
-    if(SUCCESS != rc) {
-        ESP_LOGE(TAG, "aws_iot_shadow_init returned error %d, aborting...", rc);
-        return;
-    }
-
     ShadowConnectParameters_t scp = ShadowConnectParametersDefault;
     scp.pMyThingName = this->device_name.c_str();
     scp.pMqttClientId = this->device_name.c_str();
     scp.mqttClientIdLen = (uint16_t) strlen(this->device_name.c_str());
 
 
-    rc = aws_iot_shadow_connect(&mqttClient, &scp);
-    if(SUCCESS != rc) {
-        ESP_LOGE(TAG, "aws_iot_shadow_connect returned error %d, aborting...", rc);
-        return;
-    }
-
-
-    rc = aws_iot_shadow_set_autoreconnect_status(&mqttClient, true);
-    if(SUCCESS != rc) {
-        ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d, aborting...", rc);
-        return;
-    }
 
     long last = millis();
 
     int interval = 15000;
 
+    bool connected = false;
 
     while (true) {
+        if (!connected) {
+            vTaskDelay(15000 / portTICK_RATE_MS);
+
+            rc = aws_iot_shadow_init(&mqttClient, &sp);
+            if(SUCCESS != rc) {
+                ESP_LOGE(TAG, "aws_iot_shadow_init returned error %d, aborting...", rc);
+                continue;
+            }
+
+            rc = aws_iot_shadow_connect(&mqttClient, &scp);
+            if(SUCCESS != rc) {
+                ESP_LOGE(TAG, "aws_iot_shadow_connect returned error %d, aborting...", rc);
+                continue;
+            }
+
+            rc = aws_iot_shadow_set_autoreconnect_status(&mqttClient, true);
+            if(SUCCESS != rc) {
+                ESP_LOGE(TAG, "Unable to set Auto Reconnect to true - %d, aborting...", rc);
+                continue;
+            }
+
+            connected = true;
+        }
+
         rc = aws_iot_shadow_yield(&mqttClient, 200);
 
         SensorMessage message;
