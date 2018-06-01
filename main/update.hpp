@@ -17,8 +17,6 @@ public:
 private:
 	bool update(const char* url);
 
-    uint8_t should_autoupdate = 1;
-
 	TaskHandle_t update_task_handle;
     long failure_count = 0;
 
