@@ -282,14 +282,12 @@ void Update::task() {
     while (true) {
         ESP_LOGI(TAG, "checking for update");
 
-        if (should_autoupdate == 1) {
-            if (this->update(update_url)) {
-                ESP_LOGI(TAG, "updated, restarting");
-                esp_restart();
-            } else {
-                failure_count = failure_count + 1;
-                ESP_LOGI(TAG, "update failed %ld times", failure_count);
-            }
+        if (this->update(update_url)) {
+            ESP_LOGI(TAG, "updated, restarting");
+            esp_restart();
+        } else {
+            failure_count = failure_count + 1;
+            ESP_LOGI(TAG, "update failed %ld times", failure_count);
         }
 
         vTaskDelay(90000 / portTICK_RATE_MS);
