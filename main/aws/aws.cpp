@@ -43,7 +43,7 @@ AWS::AWS(std::string& device_name, std::string& device_type, std::string& device
 device_name(device_name),
 device_type(device_type),
 device_id(device_id) {
-    xTaskCreate(&task_wrapper, "aws_task", 16384, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
+    xTaskCreate(&task_wrapper, "aws_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
 }
 
 

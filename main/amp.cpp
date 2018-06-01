@@ -26,7 +26,7 @@ static void task_wrapper(void *param) {
 Amp::Amp() : current_volume(MIN_VOLUME), use_spread_spectrum(false) {
     max9744_init();
 
-    xTaskCreate(&task_wrapper, "amp_task", 4096, this, (tskIDLE_PRIORITY + 10), &this->amp_task_handle);
+    xTaskCreate(&task_wrapper, "amp_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->amp_task_handle);
 }
 
 

@@ -20,7 +20,7 @@ static void task_wrapper(void *param) {
 
 
 LED::LED(): identify(false), error(false), ready(false) {
-    xTaskCreate(&task_wrapper, "led_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->led_task_handle);
+    xTaskCreate(&task_wrapper, "led_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->led_task_handle);
 }
 
 
