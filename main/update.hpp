@@ -17,9 +17,6 @@ public:
 private:
 	bool update(const char* url);
 
-	int save_autoupdate(const char *filename, uint8_t should_autoupdate);
-	int restore_autoupdate(const char *filename, uint8_t *should_autoupdate);
-	
     uint8_t should_autoupdate = 1;
 
 	TaskHandle_t update_task_handle;

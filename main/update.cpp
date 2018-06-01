@@ -230,38 +230,6 @@ bool Update::update(const char* url) {
         } else if (res == 404) {
             throw std::runtime_error("firmware binary not found");
         } else if (res == 200) {
-            #if defined(USE_ESP_TLS)
-            while (true) {
-                memset(text, 0, TEXT_BUFFSIZE);
-
-                int buff_len = http.read(text, TEXT_BUFFSIZE);
-                if (buff_len < 0) {
-                    if (errno == EAGAIN) {
-                        long now = millis();
-                        if (timeout <= 0 || (now - start) < timeout) {
-                            continue;
-                        }
-                    }
-                    ESP_LOGI(TAG, "error: = %d", errno);
-                    break;
-                } else if (buff_len > 0) {
-                    err = esp_ota_write(update_handle, (const void *)text, buff_len);
-                    if (err != ESP_OK) {
-                        ESP_LOGI(TAG, "esp_ota_write: %d", err);
-                        break;
-                    }
-                    binary_file_length += buff_len;
-                    ESP_LOGI(TAG, "written %d", binary_file_length);
-                } else if (buff_len == 0) { /*packet over*/
-                    ESP_LOGI(TAG, "connection closed");
-                    break;
-                } else {
-                    ESP_LOGI(TAG, "unexpected recv result");
-                    break;
-                }
-            }
-            #endif
-
             ESP_LOGI(TAG, "firmware size: %d", binary_file_length);
         } else {
             ESP_LOGI(TAG, "unknown error: %d", res);
@@ -306,16 +274,6 @@ void Update::task() {
 
     /* Wait for wifi to be available */
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
-
-    /*
-    if (0 == this->restore_autoupdate(AUTOUPDATE_SETTINGS_PATH, &should_autoupdate)) {
-        ESP_LOGI(TAG, "autoupdate: %d", should_autoupdate);
-    } else {
-        ESP_LOGI(TAG, "using default settings");
-        should_autoupdate = 1;
-        this->save_autoupdate(AUTOUPDATE_SETTINGS_PATH, should_autoupdate);
-    }*/
-
 
     // wait 60s before attempting first update check at boot
     vTaskDelay(60000 / portTICK_RATE_MS);
