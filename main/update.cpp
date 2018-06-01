@@ -228,12 +228,12 @@ bool Update::update(const char* url) {
         res = http.get(firmware_url.c_str());
         ESP_LOGI(TAG, "http request success: %d", res);
 
-        #if defined(USE_ESP_TLS)
         if (res >= 500) {
             throw std::runtime_error("server error");
         } else if (res == 404) {
             throw std::runtime_error("firmware binary not found");
         } else if (res == 200) {
+            #if defined(USE_ESP_TLS)
             while (true) {
                 memset(text, 0, TEXT_BUFFSIZE);
                 memset(ota_write_data, 0, BUFFSIZE);
@@ -265,12 +265,13 @@ bool Update::update(const char* url) {
                     break;
                 }
             }
+            #endif
+
             ESP_LOGI(TAG, "firmware size: %d", binary_file_length);
         } else {
             ESP_LOGI(TAG, "unknown error: %d", res);
             throw std::runtime_error("HTTP failed");
         }
-        #endif
 
     } catch (std::exception &ex) {
         ESP_LOGI(TAG, "update failed: %s", ex.what());
