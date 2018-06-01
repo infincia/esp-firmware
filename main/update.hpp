@@ -7,7 +7,6 @@
 #ifndef UPDATE_H_
 #define UPDATE_H_
 
-#define BUFFSIZE 8192
 #define TEXT_BUFFSIZE 1024
 
 class Update {
@@ -33,9 +32,6 @@ private:
     std::string device_id;
 
     const char* update_url;
-
-    /* an ota data write buffer ready to write to the flash */
-    uint8_t ota_write_data[BUFFSIZE + 1] = {0};
     
     /* an packet receive buffer */
     char text[TEXT_BUFFSIZE + 1] = {0};
