@@ -1,7 +1,7 @@
 #pragma once
 
 #define USE_OTA 1
-//#define USE_AWS 1
+#define USE_AWS 1
 #define USE_WEB 1
 #define USE_WEBSOCKET 1
 #define USE_HOMEKIT 1
