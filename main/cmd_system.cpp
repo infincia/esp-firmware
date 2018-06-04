@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
 
-#if defined(USE_CONSOLE)
+#if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 
 #include "sdkconfig.h"
 

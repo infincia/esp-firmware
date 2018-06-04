@@ -2,7 +2,7 @@
 
 #include "pch.hpp"
 
-#if defined(USE_CONSOLE)
+#if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 
 #ifndef CONSOLE_H_
 #define CONSOLE_H_

@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
 
-#if defined(USE_AMP)
+#if defined(CONFIG_FIRMWARE_USE_AMP)
 
 
 #include "ir.hpp"

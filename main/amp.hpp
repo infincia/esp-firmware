@@ -2,7 +2,7 @@
 
 #include "pch.hpp"
 
-#if defined(USE_AMP)
+#if defined(CONFIG_FIRMWARE_USE_AMP)
 
 #ifndef AMP_H_
 #define AMP_H_

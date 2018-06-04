@@ -1,6 +1,6 @@
 #include "../pch.hpp"
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 
 #include "homekit.hpp"
 

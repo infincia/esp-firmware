@@ -3,7 +3,7 @@
 
 #include "pch.hpp"
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 
 #ifndef WEB_H_
 #define WEB_H_
@@ -25,7 +25,7 @@ private:
 
     uint16_t port;
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 	void send_volume(int current_volume);
     void send_temperature(float current_temperature, float current_humidity);
 #endif

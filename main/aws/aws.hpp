@@ -2,7 +2,7 @@
 
 #include "../pch.hpp"
 
-#if defined(USE_AWS)
+#if defined(CONFIG_FIRMWARE_USE_AWS)
 
 #ifndef AWS_H_
 #define AWS_H_

@@ -2,7 +2,7 @@
 
 #include "pch.hpp"
 
-#if defined(USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
 
 #ifndef TEMPERATURE_H_
 #define TEMPERATURE_H_

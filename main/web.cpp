@@ -1,8 +1,8 @@
 #include "pch.hpp"
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -14,7 +14,7 @@
 #include "HttpRequest.h"
 #include "HttpResponse.h"
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 #include "WebSocket.h"
 #include "websocket.hpp"
 #endif
@@ -48,7 +48,7 @@ static void initialise_mdns(const char* name, uint16_t port) {
  * 
  * */
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 std::mutex conns_mutex;
 std::vector<Conn *> conns;
 #endif
@@ -194,7 +194,7 @@ static void handle_set_identify(HttpRequest *request, HttpResponse *response, vo
 
 }
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 static void handle_websocket(HttpRequest *request, HttpResponse *response, void* ctx) {
     auto ws = request->getWebSocket();
     if (ws != nullptr) {
@@ -292,7 +292,7 @@ void Web::task() {
 
     this->webServer.addPathHandler("GET", "/", handle_index);
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
     this->webServer.addPathHandler("GET", "/ws", handle_websocket);
 #endif
 
@@ -313,7 +313,7 @@ void Web::task() {
         if (xQueueReceive(webQueue, &(message), (TickType_t)10)) {
             ESP_LOGV(TAG, "message received");
 
-#if defined(USE_WEBSOCKET)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
             if (message.messageType == ControlMessageTypeVolumeEvent) {
                 auto current_volume = message.volumeLevel;
                 this->send_volume(current_volume);
