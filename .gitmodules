@@ -22,3 +22,6 @@
 [submodule "components/mongoose_espidf"]
 	path = components/mongoose_espidf
 	url = https://github.com/infincia/mongoose_espidf.git
+[submodule "components/https_client_espidf"]
+	path = components/https_client_espidf
+	url = https://github.com/infincia/https_client_espidf.git
