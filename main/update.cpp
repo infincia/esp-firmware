@@ -5,7 +5,7 @@
 
 #include "update.hpp"
 
-#include <c_semver.h>
+#include <Semver.hpp>
 #include <JSON.h>
 
 static const char *TAG = "[Update]";
@@ -126,24 +126,6 @@ bool Update::update(const char* url) {
 
 
 
-    struct semver_context current_version;
-
-    int32_t cres;
-
-    semver_init(&current_version, VERSION);
-
-    cres = semver_parse(&current_version);
-
-    if (cres != SEMVER_PARSE_OK) {
-        ESP_LOGI(TAG, "current_version check failed: %d", cres);
-        semver_free(&current_version);
-        return false;
-    }
-
-    printf("major = %d, minor = %d, patch = %d\n", current_version.major, current_version.minor, current_version.patch);
-
-
-
     HTTPSClient http_manifest(user_agent, letsencrypt_chain_pem_start, timeout);
 
     std::string available_version_s;
@@ -188,25 +170,17 @@ bool Update::update(const char* url) {
     }
 
 
+    try {
+        Semver current_version(VERSION);
+        Semver available_version(available_version_s);
 
-    struct semver_context available_version;
-    semver_init(&available_version, available_version_s.c_str());
-    cres = semver_parse(&available_version);
-    if (cres != SEMVER_PARSE_OK) {
-        ESP_LOGI(TAG, "available_version check failed: %d", cres);
-        semver_free(&current_version);
-        semver_free(&available_version);
-        return false;
-    }
-
-    printf("major = %d, minor = %d, patch = %d\n", available_version.major, available_version.minor, available_version.patch);
-
-
-    if (available_version.major <= current_version.major && available_version.minor <= current_version.minor && available_version.patch <= current_version.patch) {
-        ESP_LOGI(TAG, "no update available");
-        semver_free(&current_version);
-        semver_free(&available_version);
-        return false;
+        if (available_version <= current_version) {
+            ESP_LOGI(TAG, "no update available");
+            return false;
+        }
+    } catch (std::exception &ex) {
+        ESP_LOGI(TAG, "version check failed: %s", ex.what());
+        return false;    
     }
 
 
@@ -242,23 +216,14 @@ bool Update::update(const char* url) {
 
     if (ESP_OK != esp_ota_end(update_handle)) {
         ESP_LOGI(TAG, "esp_ota_end failed");
-        semver_free(&current_version);     
-        semver_free(&available_version);
-
         return false;
     }
 
     err = esp_ota_set_boot_partition(update_partition);
     if (err != ESP_OK) {
         ESP_LOGI(TAG, "boot select error: %d", err);
-        semver_free(&current_version);
-        semver_free(&available_version);
-
         return false;
     }
-
-    semver_free(&current_version);
-    semver_free(&available_version);
 
     return true;
 }
