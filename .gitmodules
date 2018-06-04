@@ -13,3 +13,6 @@
 [submodule "components/esp32-snippets"]
 	path = components/esp32-snippets
 	url = https://github.com/nkolban/esp32-snippets.git
+[submodule "components/sha256_espidf"]
+	path = components/sha256_espidf
+	url = https://github.com/infincia/sha256_espidf.git
