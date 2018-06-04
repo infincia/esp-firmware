@@ -10,7 +10,7 @@ config FIRMWARE_USE_AMP
 
 config FIRMWARE_USE_AWS
     bool "Enable AWS"
-    depends on CONFIG_AWS_IOT_SDK
+    depends on AWS_IOT_SDK
     default true
     help
         Enable AWS support
