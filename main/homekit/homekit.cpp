@@ -91,12 +91,12 @@ void hap_object_init(void* arg) {
 
     void* accessory_object = hap_accessory_add(a);
     struct hap_characteristic cs[] = {
-        {HAP_CHARACTER_IDENTIFY, (void*)true, NULL, identify_read, NULL, NULL},
-        {HAP_CHARACTER_MANUFACTURER, (void*)"Infincia LLC", NULL, NULL, NULL, NULL},
-        {HAP_CHARACTER_MODEL, (void*)instance->device_type.c_str(), NULL, NULL, NULL, NULL},
-        {HAP_CHARACTER_NAME, (void*)instance->device_name.c_str(), NULL, NULL, NULL, NULL},
-        {HAP_CHARACTER_SERIAL_NUMBER, (void*)instance->device_id.c_str(), NULL, NULL, NULL, NULL},
-        {HAP_CHARACTER_FIRMWARE_REVISION, (void*)VERSION, NULL, NULL, NULL, NULL},
+        {HAP_CHARACTER_IDENTIFY, (void*)true, instance, identify_read, NULL, NULL},
+        {HAP_CHARACTER_MANUFACTURER, (void*)"Infincia LLC", instance, NULL, NULL, NULL},
+        {HAP_CHARACTER_MODEL, (void*)instance->device_type.c_str(), instance, NULL, NULL, NULL},
+        {HAP_CHARACTER_NAME, (void*)instance->device_name.c_str(), instance, NULL, NULL, NULL},
+        {HAP_CHARACTER_SERIAL_NUMBER, (void*)instance->device_id.c_str(), instance, NULL, NULL, NULL},
+        {HAP_CHARACTER_FIRMWARE_REVISION, (void*)VERSION, instance, NULL, NULL, NULL},
     };
     hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_ACCESSORY_INFORMATION, cs, ARRAY_SIZE(cs));
 
