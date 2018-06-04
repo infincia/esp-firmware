@@ -16,3 +16,6 @@
 [submodule "components/sha256_espidf"]
 	path = components/sha256_espidf
 	url = https://github.com/infincia/sha256_espidf.git
+[submodule "components/semver_espidf"]
+	path = components/semver_espidf
+	url = https://github.com/infincia/semver_espidf.git
