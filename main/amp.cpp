@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
 
-#if defined(USE_AMP)
+#if defined(CONFIG_FIRMWARE_USE_AMP)
 
 
 #include "amp.hpp"
@@ -23,7 +23,7 @@ static void task_wrapper(void *param) {
 }
 
 
-Amp::Amp() : current_volume(MIN_VOLUME), use_spread_spectrum(false) {
+Amp::Amp() : current_volume(CONFIG_FIRMWARE_MINIMUM_VOLUME), use_spread_spectrum(false) {
     max9744_init();
 
     xTaskCreate(&task_wrapper, "amp_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->amp_task_handle);
@@ -40,11 +40,11 @@ Amp::~Amp() = default;
 bool Amp::set_volume(uint8_t volume) {
     // Ensure the new value is within bounds
 
-    if (volume >= MAX_VOLUME) {
-        volume = MAX_VOLUME;
+    if (volume >= CONFIG_FIRMWARE_MAXIMUM_VOLUME) {
+        volume = CONFIG_FIRMWARE_MAXIMUM_VOLUME;
     }
-    if (volume <= MIN_VOLUME) {
-        volume = MIN_VOLUME;
+    if (volume <= CONFIG_FIRMWARE_MINIMUM_VOLUME) {
+        volume = CONFIG_FIRMWARE_MINIMUM_VOLUME;
     }
 
     current_volume = volume;
@@ -66,7 +66,7 @@ bool Amp::set_volume(uint8_t volume) {
             ESP_LOGE(TAG, "Setting display text failed");
         }
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
         WebControlMessage message2;
         message2.messageType = ControlMessageTypeVolumeEvent;
         message2.volumeLevel = current_volume;
@@ -81,7 +81,7 @@ bool Amp::set_volume(uint8_t volume) {
 
 
 bool Amp::increase_volume() {
-    if (current_volume >= MAX_VOLUME) {
+    if (current_volume >= CONFIG_FIRMWARE_MAXIMUM_VOLUME) {
         return false;
     }
     current_volume++;
@@ -90,7 +90,7 @@ bool Amp::increase_volume() {
 
 
 bool Amp::decrease_volume() {
-    if (current_volume <= MIN_VOLUME) {
+    if (current_volume <= CONFIG_FIRMWARE_MINIMUM_VOLUME) {
         return false;
     }
     current_volume--;
@@ -111,7 +111,7 @@ void Amp::task() {
         this->set_volume(saved_volume);
     } else {
         ESP_LOGE(TAG, "using default volume");
-        this->set_volume(DEFAULT_VOLUME);
+        this->set_volume(CONFIG_FIRMWARE_DEFAULT_VOLUME);
     }
 
     while (true) {

@@ -19,15 +19,15 @@ extern QueueHandle_t volumeChangeQueue;
 extern QueueHandle_t displayQueue;
 
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 extern QueueHandle_t webQueue;
 #endif
 
-#if defined(USE_AWS)
+#if defined(CONFIG_FIRMWARE_USE_AWS)
 extern QueueHandle_t awsQueue;
 #endif
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 extern QueueHandle_t homekitQueue;
 #endif
 

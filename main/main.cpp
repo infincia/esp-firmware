@@ -2,33 +2,33 @@
 
 #include "led.hpp"
 
-#if defined(USE_CONSOLE)
+#if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 #include "console.hpp"
 #endif
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 #include "web.hpp"
 #endif
 
-#if defined(USE_AMP)
+#if defined(CONFIG_FIRMWARE_USE_AMP)
 #include "amp.hpp"
 #include "ir.hpp"
 #include "oled.hpp"
 #endif
 
-#if defined(USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
 #include "temperature.hpp"
 #endif
 
-#if defined(USE_OTA)
+#if defined(CONFIG_FIRMWARE_USE_OTA)
 #include "update.hpp"
 #endif
 
-#if defined(USE_AWS)
+#if defined(CONFIG_FIRMWARE_USE_AWS)
 #include "aws/aws.hpp"
 #endif
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 #include "homekit/homekit.hpp"
 #endif
 
@@ -44,33 +44,33 @@ TaskHandle_t setup_task_handle;
 LED *led;
 
 
-#if defined(USE_CONSOLE)
+#if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 Console *console;
 #endif
 
-#if defined(USE_AMP)
+#if defined(CONFIG_FIRMWARE_USE_AMP)
 Amp *amp;
 IR *ir;
 OLED *oled;
 #endif
 
-#if defined(USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
 Temperature *temperature;
 #endif
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 Web *web;
 #endif
 
-#if defined(USE_OTA)
+#if defined(CONFIG_FIRMWARE_USE_OTA)
 Update *update;
 #endif
 
-#if defined(USE_AWS)
+#if defined(CONFIG_FIRMWARE_USE_AWS)
 AWS *aws;
 #endif
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 Homekit *homekit;
 #endif
 
@@ -121,7 +121,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 
 
 void setup_queues() {
-    #if defined(USE_AMP)
+    #if defined(CONFIG_FIRMWARE_USE_AMP)
     volumeChangeQueue = xQueueCreate(3, sizeof(VolumeControlMessage));
     if (volumeChangeQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create volume queue, restarting");
@@ -135,7 +135,7 @@ void setup_queues() {
     }
     #endif
 
-    #if defined(USE_WEB)
+    #if defined(CONFIG_FIRMWARE_USE_WEB)
     webQueue = xQueueCreate(2, sizeof(WebControlMessage));
     if (webQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create web queue, restarting");
@@ -143,7 +143,7 @@ void setup_queues() {
     }
     #endif
 
-    #if defined(USE_AWS)
+    #if defined(CONFIG_FIRMWARE_USE_AWS)
     awsQueue = xQueueCreate(2, sizeof(SensorMessage));
     if (awsQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create aws queue, restarting");
@@ -151,7 +151,7 @@ void setup_queues() {
     }
     #endif
 
-    #if defined(USE_HOMEKIT)
+    #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
     homekitQueue = xQueueCreate(2, sizeof(SensorMessage));
     if (homekitQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create homekit queue, restarting");
@@ -172,17 +172,17 @@ void setup_queues() {
 void setup_sensor(std::string& device_name, std::string& device_type, std::string& device_id) {
     ESP_LOGI(TAG, "starting sensor services...");
 
-    #if defined(USE_TEMPERATURE)
+    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
     temperature = new Temperature(device_name, device_type, device_id);
     ESP_LOGI(TAG, "+ Temperature");
     #endif
 
-    #if defined(USE_AWS)
+    #if defined(CONFIG_FIRMWARE_USE_AWS)
     ESP_LOGI(TAG, "+ AWS");
     aws = new AWS(device_name, device_type, device_id);
     #endif
 
-    #if defined(USE_HOMEKIT)
+    #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
     ESP_LOGI(TAG, "+ Homekit");
     homekit = new Homekit(device_name, device_type, device_id);
     #endif
@@ -192,7 +192,7 @@ void setup_sensor(std::string& device_name, std::string& device_type, std::strin
 void setup_amp(std::string& device_name, std::string& device_type, std::string& device_id) {
     ESP_LOGI(TAG, "starting amp services...");
 
-    #if defined(USE_AMP)
+    #if defined(CONFIG_FIRMWARE_USE_AMP)
     amp = new Amp();
     ir = new IR();
     oled = new OLED();
@@ -210,9 +210,9 @@ void setup_wifi() {
     wifi_config_t wifi_config;
     wifi_sta_config_t sta_config;
 
-    #if defined(HARDCODE_WIFI)
-    strcpy((char *)sta_config.ssid, CONFIG_WIFI_SSID);
-    strcpy((char *)sta_config.password, CONFIG_WIFI_PASSWORD);
+    #if defined(CONFIG_FIRMWARE_HARDCODE_WIFI)
+    strcpy((char *)sta_config.ssid, CONFIG_FIRMWARE_WIFI_SSID);
+    strcpy((char *)sta_config.password, CONFIG_FIRMWARE_WIFI_PASSWORD);
     #else
     std::string ssid;
     std::string password;
@@ -260,15 +260,15 @@ void setup_device(std::string& device_id) {
     
     led = new LED();
 
-    #if defined(USE_OTA)
+    #if defined(CONFIG_FIRMWARE_USE_OTA)
     update = new Update(device_name, device_type, device_id);
     #endif
 
-    #if defined(USE_WEB)
-    web = new Web(DEFAULT_HTTP_PORT, device_name, device_type, device_id);
+    #if defined(CONFIG_FIRMWARE_USE_WEB)
+    web = new Web(CONFIG_FIRMWARE_WEB_PORT, device_name, device_type, device_id);
     #endif
 
-    #if defined(USE_CONSOLE)
+    #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
     console = new Console();
     #endif
 

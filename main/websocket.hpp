@@ -3,7 +3,7 @@
 
 #include "pch.hpp"
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 
 
 #ifndef WEBSOCKET_HANDLER_H_

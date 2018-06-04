@@ -24,7 +24,7 @@ typedef struct display_message {
     char text[3];
 } DisplayControlMessage;
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 typedef struct web_message {
     MessageType messageType;
     uint8_t volumeLevel;

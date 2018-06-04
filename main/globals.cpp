@@ -12,15 +12,15 @@ EventBits_t PROVISIONED_BIT = BIT0;
 QueueHandle_t volumeChangeQueue;
 QueueHandle_t displayQueue;
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
 QueueHandle_t webQueue;
 #endif
 
-#if defined(USE_AWS)
+#if defined(CONFIG_FIRMWARE_USE_AWS)
 QueueHandle_t awsQueue;
 #endif
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 QueueHandle_t homekitQueue;
 #endif
 

@@ -81,12 +81,12 @@
  *
  */
 
-#if defined(USE_CONSOLE)
+#if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 #include <argtable3/argtable3.h>
 #include <linenoise/linenoise.h>
 #endif
 
-#if defined(USE_OTA)
+#if defined(CONFIG_FIRMWARE_USE_OTA)
 #include <HTTPSClient.hpp>
 #include <SHA256.hpp>
 #endif
@@ -97,7 +97,7 @@
  *
  */
 
-#if defined(USE_CONSOLE)
+#if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 #include "cmd_decl.hpp"
 #endif
 #include "globals.hpp"

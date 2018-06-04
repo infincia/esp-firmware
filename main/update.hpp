@@ -2,7 +2,7 @@
 
 #include "pch.hpp"
 
-#if defined(USE_OTA)
+#if defined(CONFIG_FIRMWARE_USE_OTA)
 
 #ifndef UPDATE_H_
 #define UPDATE_H_

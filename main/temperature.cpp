@@ -1,7 +1,7 @@
 #include "pch.hpp"
 
 
-#if defined(USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
 
 #include "temperature.hpp"
 
@@ -78,7 +78,7 @@ bool Temperature::update() {
     this->current_temperature = (sensor_data.temperature * 1.8f) + 32.0f;
     this->current_humidity = sensor_data.humidity;
 
-#if defined(USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEB)
     {
         WebControlMessage message;
         message.messageType = ControlMessageTypeTemperatureEvent;
@@ -91,20 +91,20 @@ bool Temperature::update() {
     }
 #endif
 
-#if defined(USE_AWS) || defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_AWS) || defined(CONFIG_FIRMWARE_USE_HOMEKIT)
     {
         SensorMessage message;
         message.messageType = EventTemperatureSensorValue;
         message.temperature = this->current_temperature;
         message.humidity = this->current_humidity;
 
-#if defined(USE_AWS)
+#if defined(CONFIG_FIRMWARE_USE_AWS)
         if (!xQueueSend(awsQueue, (void *)&message, (TickType_t)0)) {
             ESP_LOGV(TAG, "Sending aws sensor event failed");
         }
 #endif
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
         if (!xQueueSend(homekitQueue, (void *)&message, (TickType_t)0)) {
             ESP_LOGV(TAG, "Sending homekit sensor event failed");
         }

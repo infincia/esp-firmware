@@ -2,7 +2,7 @@
 
 #include "../pch.hpp"
 
-#if defined(USE_HOMEKIT)
+#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 
 #ifndef HOMEKIT_H_
 #define HOMEKIT_H_
