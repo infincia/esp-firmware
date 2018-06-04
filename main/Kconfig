@@ -1,0 +1,141 @@
+menu "Firmware"
+
+config FIRMWARE_USE_AMP
+    bool "Enable Amplifier Support"
+    depends on MAX9744_ESPIDF_ENABLED
+    default true
+    help
+        Enable Amplifier Support via MAX9744
+
+
+config FIRMWARE_USE_AWS
+    bool "Enable AWS"
+    depends on CONFIG_AWS_IOT_SDK
+    default true
+    help
+        Enable AWS support
+
+
+config FIRMWARE_USE_HOMEKIT
+    bool "Enable Homekit"
+    depends on FIRMWARE_USE_TEMPERATURE
+    default true
+    help
+        Enable Homekit support
+
+
+config FIRMWARE_USE_OTA
+    bool "Enable OTA updater"
+    default true
+    help
+        Enable OTA updater
+
+
+config FIRMWARE_USE_WEB
+    bool "Enable Web"
+    default true
+    help
+        Enables Web interface
+
+config FIRMWARE_WEB_MAX_CONNECTIONS
+    int "Maximum simultaneous web connections"
+    depends on FIRMWARE_USE_WEB
+    default 5
+    help
+        Maximum simultaneous web connections
+
+config FIRMWARE_WEB_PORT
+    int "Listen port for web interface"
+    depends on FIRMWARE_USE_WEB
+    default 80
+    help
+        Listen port for web interface
+
+config FIRMWARE_USE_WEB_WEBSOCKET
+    bool "Enable Websockets in web interface"
+    depends on FIRMWARE_USE_WEB
+    default true
+    help
+        Enable Websockets in web interface
+
+
+config FIRMWARE_USE_TEMPERATURE
+    bool "Enable Temperature Sensor"
+    default true
+    help
+        Enable temperature sensor support via si7021
+
+
+config FIRMWARE_USE_CONSOLE
+    bool "Enable console interface"
+    default false
+    help
+        Enable console interface
+
+config FIRMWARE_USE_ESP_TLS
+    bool "Enable ESP TLS support"
+    default false
+    help
+        Enable ESP TLS support
+
+config FIRMWARE_HARDCODE_WIFI
+    bool "Hardcode wifi credentials"
+    default false
+    help
+        Builds wifi credentials into firmware binary
+
+config FIRMWARE_WIFI_SSID
+    string "WiFi SSID"
+    depends on FIRMWARE_HARDCODE_WIFI
+    default ""
+    help
+        WiFi SSID
+
+config FIRMWARE_WIFI_PASSWORD
+    string "WiFi Password"
+    depends on FIRMWARE_HARDCODE_WIFI
+    default ""
+    help
+        WiFi Password
+
+config FIRMWARE_DEFAULT_VOLUME
+    int "Default volume level"
+    depends on FIRMWARE_USE_AMP
+    default 27
+    help
+        Default volume level
+
+config FIRMWARE_MINIMUM_VOLUME
+    int "Minimum volume level"
+    depends on FIRMWARE_USE_AMP
+    default 0
+    help
+        Minimum volume level
+
+config FIRMWARE_MAXIMUM_VOLUME
+    int "Maximum volume level"
+    depends on FIRMWARE_USE_AMP
+    default 63
+    help
+        Maximum volume level
+
+
+config FIRMWARE_ERROR_GPIO
+    int "GPIO for error LED"
+    default 16
+    help
+        GPIO for error LED
+
+config FIRMWARE_READY_GPIO
+    int "GPIO for ready LED"
+    default 17
+    help
+        GPIO for ready LED
+
+config FIRMWARE_IDENTIFY_GPIO
+    int "GPIO for identify LED"
+    default 18
+    help
+        GPIO for identify LED
+
+endmenu
