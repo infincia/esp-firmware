@@ -19,3 +19,6 @@
 [submodule "components/semver_espidf"]
 	path = components/semver_espidf
 	url = https://github.com/infincia/semver_espidf.git
+[submodule "components/mongoose_espidf"]
+	path = components/mongoose_espidf
+	url = https://github.com/infincia/mongoose_espidf.git
