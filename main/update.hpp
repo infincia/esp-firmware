@@ -11,9 +11,10 @@
 
 class Update {
 public:
-	Update(std::string& device_name, std::string& device_type, std::string& device_id);
+	Update(const char* update_manifest_url);
 	virtual ~Update();
 	void task();
+    void start(std::string& device_name, std::string& device_type, std::string& device_id);
 private:
 	bool update(const char* url);
 

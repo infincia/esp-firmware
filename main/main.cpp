@@ -63,7 +63,15 @@ Web web(CONFIG_FIRMWARE_WEB_PORT);
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_OTA)
-Update *update;
+
+#if !defined(CONFIG_FIRMWARE_OTA_MANIFEST_URL)
+#error "Missing OTA manifest URL"
+#else
+static const char* UPDATE_MANIFEST_URL = CONFIG_FIRMWARE_OTA_MANIFEST_URL;
+#endif
+
+Update update(UPDATE_MANIFEST_URL);
+
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_AWS)
@@ -265,7 +273,7 @@ void setup_device(std::string& device_id) {
     led.start();
 
     #if defined(CONFIG_FIRMWARE_USE_OTA)
-    update = new Update(device_name, device_type, device_id);
+    update.start(device_name, device_type, device_id);
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
