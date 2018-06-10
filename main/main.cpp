@@ -55,7 +55,7 @@ OLED *oled;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
-Temperature *temperature;
+Temperature temperature;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_WEB)
@@ -173,7 +173,7 @@ void setup_sensor(std::string& device_name, std::string& device_type, std::strin
     ESP_LOGI(TAG, "starting sensor services...");
 
     #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
-    temperature = new Temperature(device_name, device_type, device_id);
+    temperature.start();
     ESP_LOGI(TAG, "+ Temperature");
     #endif
 
