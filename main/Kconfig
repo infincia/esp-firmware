@@ -78,12 +78,6 @@ config FIRMWARE_USE_CONSOLE
     help
         Enable console interface
 
-config FIRMWARE_USE_ESP_TLS
-    bool "Enable ESP TLS support"
-    default false
-    help
-        Enable ESP TLS support
-
 config FIRMWARE_HARDCODE_WIFI
     bool "Hardcode wifi credentials"
     default false
