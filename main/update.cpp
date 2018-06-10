@@ -66,18 +66,18 @@ bool Update::update(const char* url) {
     int binary_file_length = 0;
 
     if (configured != running) {
-        ESP_LOGI(
+        ESP_LOGW(
             TAG, "configured 0x%08x, but running 0x%08x", configured->address, running->address);
     }
-    ESP_LOGI(TAG, "Running partition type %d subtype %d (offset 0x%08x)", running->type,
+    ESP_LOGD(TAG, "Running partition type %d subtype %d (offset 0x%08x)", running->type,
         running->subtype, running->address);
 
     if (!update_partition) {
-        ESP_LOGI(TAG, "failed to get update partition");
+        ESP_LOGE(TAG, "failed to get update partition");
         return false;
     }
 
-    ESP_LOGI(TAG, "next ota partition subtype %d at offset 0x%x", update_partition->subtype, update_partition->address);
+    ESP_LOGD(TAG, "next ota partition subtype %d at offset 0x%x", update_partition->subtype, update_partition->address);
 
 
     err = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &update_handle);
@@ -158,15 +158,15 @@ bool Update::update(const char* url) {
         JSON::deleteObject(m);
 
         if (available_version_s.length() == 0) {
-            ESP_LOGI(TAG, "available_version key missing");
+            ESP_LOGE(TAG, "available_version key missing");
             return false;
         }
         if (firmware_url.length() == 0) {
-            ESP_LOGI(TAG, "firmware_url key missing");
+            ESP_LOGE(TAG, "firmware_url key missing");
             return false;
         }
     } catch (std::exception &ex) {
-        ESP_LOGI(TAG, "update failed: %s", ex.what());
+        ESP_LOGE(TAG, "update failed: %s", ex.what());
         return false;
     }
 
@@ -180,7 +180,7 @@ bool Update::update(const char* url) {
             return false;
         }
     } catch (std::exception &ex) {
-        ESP_LOGI(TAG, "version check failed: %s", ex.what());
+        ESP_LOGE(TAG, "version check failed: %s", ex.what());
         return false;    
     }
 
@@ -191,38 +191,38 @@ bool Update::update(const char* url) {
         http.set_read_cb([&] (const char* buf, int length) {
             err = esp_ota_write(update_handle, buf, length);
             if (err != ESP_OK) {
-                ESP_LOGI(TAG, "esp_ota_write: %d", err);
+                ESP_LOGD(TAG, "esp_ota_write: %d", err);
             }
             binary_file_length += length;
             ESP_LOGD(TAG, "written %d", binary_file_length);
         });
 
         res = http.get(firmware_url.c_str());
-        ESP_LOGI(TAG, "http request success: %d", res);
+        ESP_LOGD(TAG, "http request success: %d", res);
 
         if (res >= 500) {
             throw std::runtime_error("server error");
         } else if (res == 404) {
             throw std::runtime_error("firmware binary not found");
         } else if (res == 200) {
-            ESP_LOGI(TAG, "firmware size: %d", binary_file_length);
+            ESP_LOGD(TAG, "firmware size: %d", binary_file_length);
         } else {
-            ESP_LOGI(TAG, "unknown error: %d", res);
+            ESP_LOGE(TAG, "unknown error: %d", res);
             throw std::runtime_error("HTTP failed");
         }
 
     } catch (std::exception &ex) {
-        ESP_LOGI(TAG, "update failed: %s", ex.what());
+        ESP_LOGE(TAG, "update failed: %s", ex.what());
     }
 
     if (ESP_OK != esp_ota_end(update_handle)) {
-        ESP_LOGI(TAG, "esp_ota_end failed");
+        ESP_LOGE(TAG, "esp_ota_end failed");
         return false;
     }
 
     err = esp_ota_set_boot_partition(update_partition);
     if (err != ESP_OK) {
-        ESP_LOGI(TAG, "boot select error: %d", err);
+        ESP_LOGE(TAG, "boot select error: %d", err);
         return false;
     }
 
