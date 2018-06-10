@@ -36,11 +36,13 @@ static void task_wrapper(void *param) {
 }
 
 
-Temperature::Temperature(std::string& device_name, std::string& device_type, std::string& device_id): 
-device_name(device_name), 
-device_type(device_type),
-device_id(device_id) {
+Temperature::Temperature() { }
 
+
+Temperature::~Temperature() = default;
+
+
+void Temperature::start() {
     this->port = SI7021_I2C_MASTER_NUM;
     i2c_config_t conf;
     conf.mode = I2C_MODE_MASTER;
@@ -56,9 +58,6 @@ device_id(device_id) {
     xTaskCreate(&task_wrapper, "temperature_task", 4096, this, (tskIDLE_PRIORITY + 10),
         &this->temperature_task_handle);
 }
-
-
-Temperature::~Temperature() = default;
 
 
 /**
