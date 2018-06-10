@@ -59,7 +59,7 @@ Temperature temperature;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_WEB)
-Web *web;
+Web web(CONFIG_FIRMWARE_WEB_PORT);
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_OTA)
@@ -256,7 +256,7 @@ void setup_device(std::string& device_id) {
         device_name = "none";
 
         #if defined(CONFIG_FIRMWARE_USE_WEB)
-        web = new Web(CONFIG_FIRMWARE_WEB_PORT, device_name, device_type, device_id);
+        web.start(device_name, device_type, device_id);
         #endif
     }
 

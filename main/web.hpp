@@ -12,9 +12,10 @@
 
 class Web {
 public:
-	Web(uint16_t port, std::string& device_name, std::string& device_type, std::string& device_id);
+	Web(uint16_t port);
 	virtual ~Web();
 	void task();
+    void start(std::string& device_name, std::string& device_type, std::string& device_id);
 
 	std::string device_name;
 	std::string device_type;
