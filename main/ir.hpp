@@ -13,6 +13,7 @@ public:
 	IR();
 	virtual ~IR();
 	void task();
+    void start();
 private:
 	TaskHandle_t ir_task_handle;
 };

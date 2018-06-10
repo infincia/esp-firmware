@@ -56,7 +56,13 @@ static void task_wrapper(void *param) {
  * @brief IR
  */
 
-IR::IR() {
+IR::IR() { }
+
+
+IR::~IR() = default;
+
+
+void IR::start() {
     rmt_config_t config;
     config.rmt_mode = RMT_MODE_RX;
     config.channel = RMT_CHANNEL_0;
@@ -72,9 +78,6 @@ IR::IR() {
 
     xTaskCreate(&task_wrapper, "ir_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->ir_task_handle);
 }
-
-
-IR::~IR() = default;
 
 
 /**

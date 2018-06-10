@@ -50,7 +50,7 @@ Console console;
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
 Amp *amp;
-IR *ir;
+IR ir;
 OLED oled;
 #endif
 
@@ -194,7 +194,7 @@ void setup_amp(std::string& device_name, std::string& device_type, std::string& 
 
     #if defined(CONFIG_FIRMWARE_USE_AMP)
     amp = new Amp();
-    ir = new IR();
+    ir.start();
     oled.start();
     #endif
 }
