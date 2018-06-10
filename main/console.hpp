@@ -12,6 +12,7 @@ public:
 	Console();
 	virtual ~Console();
 	void task();
+    void start();
 private:
 	TaskHandle_t console_task_handle;
 };

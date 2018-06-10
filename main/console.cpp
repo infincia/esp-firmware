@@ -24,7 +24,13 @@ static void task_wrapper(void *param) {
  * @brief Console
  */
 
-Console::Console() {
+Console::Console() { }
+
+
+Console::~Console() = default;
+
+
+void Console::start() {
     /* Disable buffering on stdin and stdout */
     setvbuf(stdin, nullptr, _IONBF, 0);
     setvbuf(stdout, nullptr, _IONBF, 0);
@@ -65,9 +71,6 @@ Console::Console() {
 
     xTaskCreate(&task_wrapper, "console_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->console_task_handle);
 }
-
-
-Console::~Console() = default;
 
 
 void Console::task() {
