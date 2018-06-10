@@ -41,7 +41,7 @@ TaskHandle_t setup_task_handle;
  * Tasks
  */
 
-LED *led;
+LED led;
 
 
 #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
@@ -262,7 +262,7 @@ void setup_device(std::string& device_id) {
 
     ESP_LOGI(TAG, "provisioned %s:%s", device_name.c_str(), device_type.c_str());
     
-    led = new LED();
+    led.start();
 
     #if defined(CONFIG_FIRMWARE_USE_OTA)
     update = new Update(device_name, device_type, device_id);

@@ -10,6 +10,7 @@ public:
 	LED();
 	virtual ~LED();
 	void task();
+    void start();
 
 private:
     TaskHandle_t led_task_handle;
