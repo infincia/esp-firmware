@@ -266,19 +266,21 @@ void Web::send_temperature(float current_temperature, float current_humidity) {
  */
 
 
-Web::Web(uint16_t port, std::string& device_name, std::string& device_type, std::string& device_id): 
-device_name(device_name), 
-device_type(device_type),
-device_id(device_id),
-port(port) {
-    ESP_LOGD(TAG, "init");
-    xTaskCreate(&task_wrapper, "web_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
-    ESP_LOGD(TAG, "init done");
-}
+Web::Web(uint16_t port): port(port) { }
 
 
 Web::~Web() {
     this->webServer.stop();
+}
+
+void Web::start(std::string& device_name, std::string& device_type, std::string& device_id) {
+    ESP_LOGD(TAG, "start");
+
+    this->device_name = device_name;
+    this->device_type = device_type;
+    this->device_id = device_id;
+
+    xTaskCreate(&task_wrapper, "web_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
 }
 
 
