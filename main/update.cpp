@@ -82,39 +82,40 @@ bool Update::update(const char* url) {
 
     err = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &update_handle);
     if (err != ESP_OK) {
+        const char* msg;
         switch (err) {
             case ESP_OK: //OTA operation commenced successfully.
-                ESP_LOGI(TAG, "ESP_OK");
+                msg = "ESP_OK";
                 break;
             case ESP_ERR_INVALID_ARG: //partition or out_handle arguments were NULL, or partition doesn't point to an OTA app partition.
-                ESP_LOGI(TAG, "ESP_ERR_INVALID_ARG");
+                msg = "ESP_ERR_INVALID_ARG";
                 break;
             case ESP_ERR_NO_MEM: //Cannot allocate memory for OTA operation.
-                ESP_LOGI(TAG, "ESP_ERR_NO_MEM");
+                msg = "ESP_ERR_NO_MEM";
                 break;
             case ESP_ERR_OTA_PARTITION_CONFLICT: //Partition holds the currently running firmware, cannot update in place.
-                ESP_LOGI(TAG, "ESP_ERR_OTA_PARTITION_CONFLICT");
+                msg = "ESP_ERR_OTA_PARTITION_CONFLICT";
                 break;
             case ESP_ERR_NOT_FOUND: //Partition argument not found in partition table.
-                ESP_LOGI(TAG, "ESP_ERR_NOT_FOUND");
+                msg = "ESP_ERR_NOT_FOUND";
                 break;
             case ESP_ERR_OTA_SELECT_INFO_INVALID: //The OTA data partition contains invalid data.
-                ESP_LOGI(TAG, "ESP_ERR_OTA_SELECT_INFO_INVALID");
+                msg = "ESP_ERR_OTA_SELECT_INFO_INVALID";
                 break;
             case ESP_ERR_INVALID_SIZE: //Partition doesn't fit in configured flash size.
-                ESP_LOGI(TAG, "ESP_ERR_INVALID_SIZE");
+                msg = "ESP_ERR_INVALID_SIZE";
                 break;
             case ESP_ERR_FLASH_OP_TIMEOUT:
-                ESP_LOGI(TAG, "ESP_ERR_FLASH_OP_TIMEOUT");
+                msg = "ESP_ERR_FLASH_OP_TIMEOUT";
                 break;
             case ESP_ERR_FLASH_OP_FAIL: //Flash write failed.
-                ESP_LOGI(TAG, "ESP_ERR_FLASH_OP_FAIL");
+                msg = "ESP_ERR_FLASH_OP_FAIL";
                 break;
             default:
-                ESP_LOGI(TAG, "Unknown error");
+                msg = "Unknown error";
                 break;
         }
-        ESP_LOGI(TAG, "esp_ota_begin failed: %d", err);
+        ESP_LOGE(TAG, "esp_ota_begin failed: %s", msg);
         return false;
     }
 
