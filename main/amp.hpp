@@ -12,6 +12,7 @@ public:
 	Amp();
 	virtual ~Amp();
 	void task();
+    void start();
 
 private:
     TaskHandle_t amp_task_handle;

@@ -49,7 +49,7 @@ Console console;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
-Amp *amp;
+Amp amp;
 IR ir;
 OLED oled;
 #endif
@@ -193,7 +193,7 @@ void setup_amp(std::string& device_name, std::string& device_type, std::string& 
     ESP_LOGI(TAG, "starting amp services...");
 
     #if defined(CONFIG_FIRMWARE_USE_AMP)
-    amp = new Amp();
+    amp.start();
     ir.start();
     oled.start();
     #endif
