@@ -16,6 +16,7 @@ public:
 	OLED();
 	virtual ~OLED();
 	void task();
+    void start();
 private:
     void set_text(const char *text);
 

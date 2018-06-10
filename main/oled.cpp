@@ -42,7 +42,13 @@ static void task_wrapper(void *param) {
  *
  */
 
-OLED::OLED() {
+OLED::OLED() { }
+
+
+OLED::~OLED() = default;
+
+
+void OLED::start() {
     if (!SSD1306_I2CMasterInitDefault()) {
         ESP_LOGE(TAG, "I2C init failed");
         abort();
@@ -74,9 +80,6 @@ OLED::OLED() {
 
     xTaskCreate(&task_wrapper, "oled_task", 4096, this, (tskIDLE_PRIORITY + 10), &this->oled_task_handle);
 }
-
-
-OLED::~OLED() = default;
 
 
 /**
