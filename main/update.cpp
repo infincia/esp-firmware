@@ -55,9 +55,6 @@ void Update::start(std::string& device_name, std::string& device_type, std::stri
  */
 
 bool Update::update(const char* url) {
-    ESP_LOGI(TAG, "update");
-
-
     esp_err_t err;
     esp_ota_handle_t update_handle;
 
@@ -254,9 +251,6 @@ void Update::task() {
         if (this->update(update_url)) {
             ESP_LOGI(TAG, "updated, restarting");
             esp_restart();
-        } else {
-            failure_count = failure_count + 1;
-            ESP_LOGI(TAG, "update failed %ld times", failure_count);
         }
 
         vTaskDelay(90000 / portTICK_RATE_MS);

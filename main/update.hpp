@@ -19,9 +19,6 @@ private:
 	bool update(const char* url);
 
 	TaskHandle_t update_task_handle;
-    long failure_count = 0;
-
-  
 
 	std::string device_name;
 	std::string device_type;
