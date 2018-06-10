@@ -30,6 +30,12 @@ config FIRMWARE_USE_OTA
     help
         Enable OTA updater
 
+config FIRMWARE_OTA_MANIFEST_URL
+    string "OTA update manifest URL"
+    depends on FIRMWARE_USE_OTA
+    default ""
+    help
+        OTA update manifest URL
 
 config FIRMWARE_USE_WEB
     bool "Enable Web"
