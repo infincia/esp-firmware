@@ -11,9 +11,10 @@
 
 class AWS {
 public:
-	AWS(std::string& device_name, std::string& device_type, std::string& device_id);
+	AWS();
 	virtual ~AWS();
 	void task();
+    void start(std::string& device_name, std::string& device_type, std::string& device_id);
 
 	void ShadowUpdateStatusCallback(const char *pThingName, 
                                     ShadowActions_t action, 

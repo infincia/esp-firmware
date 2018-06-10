@@ -67,7 +67,7 @@ Update *update;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_AWS)
-AWS *aws;
+AWS aws;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
@@ -179,7 +179,7 @@ void setup_sensor(std::string& device_name, std::string& device_type, std::strin
 
     #if defined(CONFIG_FIRMWARE_USE_AWS)
     ESP_LOGI(TAG, "+ AWS");
-    aws = new AWS(device_name, device_type, device_id);
+    aws.start(device_name, device_type, device_id);
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)

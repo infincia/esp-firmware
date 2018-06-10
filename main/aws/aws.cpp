@@ -39,15 +39,21 @@ static void task_wrapper(void *param) {
 }
 
 
-AWS::AWS(std::string& device_name, std::string& device_type, std::string& device_id):
-device_name(device_name),
-device_type(device_type),
-device_id(device_id) {
-    xTaskCreate(&task_wrapper, "aws_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
-}
+AWS::AWS() { }
 
 
 AWS::~AWS() = default;
+
+
+void AWS::start(std::string& device_name, std::string& device_type, std::string& device_id) {
+    ESP_LOGI(TAG, "start");
+
+    this->device_name = device_name;
+    this->device_type = device_type;
+    this->device_id = device_id;
+    
+    xTaskCreate(&task_wrapper, "aws_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
+}
 
 
 /**
