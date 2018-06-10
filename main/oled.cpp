@@ -69,7 +69,7 @@ void OLED::start() {
     SSD1306_SetContrast(&this->I2CDisplay, 10);
 
     SSD1306_Clear(&this->I2CDisplay, SSD_COLOR_BLACK);
-    SSD1306_SetFont(&this->I2CDisplay, &Font_droid_sans_mono_13x21);
+    SSD1306_SetFont(&this->I2CDisplay, &Font_droid_sans_mono_13x24);
     SSD1306_FontDrawAnchoredString(&this->I2CDisplay, TextAnchor_NorthWest, "Amp", SSD_COLOR_WHITE);
     SSD1306_FontDrawAnchoredString(&this->I2CDisplay, TextAnchor_SouthWest, VERSION, SSD_COLOR_WHITE);
 
