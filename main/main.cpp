@@ -45,7 +45,7 @@ LED *led;
 
 
 #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
-Console *console;
+Console console;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
@@ -269,7 +269,7 @@ void setup_device(std::string& device_id) {
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
-    console = new Console();
+    console.start();
     #endif
 
 
