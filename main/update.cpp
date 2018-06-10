@@ -128,7 +128,7 @@ bool Update::update(const char* url) {
 
 
 
-    HTTPSClient http_manifest(user_agent, letsencrypt_chain_pem_start, timeout);
+    HTTPSClient http_client(user_agent, letsencrypt_chain_pem_start, timeout);
 
     std::string available_version_s;
     std::string firmware_url;
@@ -137,11 +137,11 @@ bool Update::update(const char* url) {
     try {
         memset(text, 0, TEXT_BUFFSIZE);
 
-        http_manifest.set_read_cb([&] (const char* buf, int length) {
+        http_client.set_read_cb([&] (const char* buf, int length) {
             memcpy(text, buf, length);
         });
 
-        res = http_manifest.get(url);
+        res = http_client.get(url);
 
         if (res >= 500) {
             throw std::runtime_error("server error");
@@ -186,10 +186,8 @@ bool Update::update(const char* url) {
     }
 
 
-    HTTPSClient http(user_agent, letsencrypt_chain_pem_start, timeout);
-
     try {
-        http.set_read_cb([&] (const char* buf, int length) {
+        http_client.set_read_cb([&] (const char* buf, int length) {
             err = esp_ota_write(update_handle, buf, length);
             if (err != ESP_OK) {
                 ESP_LOGD(TAG, "esp_ota_write: %d", err);
@@ -198,7 +196,7 @@ bool Update::update(const char* url) {
             ESP_LOGD(TAG, "written %d", binary_file_length);
         });
 
-        res = http.get(firmware_url.c_str());
+        res = http_client.get(firmware_url.c_str());
         ESP_LOGD(TAG, "http request success: %d", res);
 
         if (res >= 500) {
