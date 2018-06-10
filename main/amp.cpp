@@ -23,12 +23,13 @@ static void task_wrapper(void *param) {
 }
 
 
-Amp::Amp() : current_volume(CONFIG_FIRMWARE_MINIMUM_VOLUME), use_spread_spectrum(false) {
+Amp::Amp() : current_volume(CONFIG_FIRMWARE_MINIMUM_VOLUME), use_spread_spectrum(false) { }
+
+void Amp::start() {
     max9744_init();
 
     xTaskCreate(&task_wrapper, "amp_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->amp_task_handle);
 }
-
 
 Amp::~Amp() = default;
 
