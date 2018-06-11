@@ -52,14 +52,14 @@ void LED::task() {
     gpio_set_direction(ready_gpio, GPIO_MODE_OUTPUT);
 
     while (true) {
-        LEDMessage message;
+        IPCMessage message;
         if (xQueueReceive(ledQueue, &(message), (TickType_t)10)) {
             if (message.messageType == EventIdentifyLED) {
-                this->identify = message.state;
+                this->identify = message.led_state;
             } else if (message.messageType == EventErrorLED) {
-                this->error = message.state;
+                this->error = message.led_state;
             } else if (message.messageType == EventReadyLED) {
-                this->ready = message.state;
+                this->ready = message.led_state;
             }
         }
 

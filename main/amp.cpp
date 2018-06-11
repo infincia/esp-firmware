@@ -59,7 +59,7 @@ bool Amp::set_volume(uint8_t volume) {
         char vols[5];
         sprintf(vols, "%d", current_volume);
 
-        DisplayControlMessage message1;
+        IPCMessage message1;
         message1.messageType = ControlMessageTypeDisplayText;
         strcpy(message1.text, vols);
 
@@ -68,7 +68,7 @@ bool Amp::set_volume(uint8_t volume) {
         }
 
 #if defined(CONFIG_FIRMWARE_USE_WEB)
-        WebControlMessage message2;
+        IPCMessage message2;
         message2.messageType = ControlMessageTypeVolumeEvent;
         message2.volumeLevel = current_volume;
 
@@ -116,7 +116,7 @@ void Amp::task() {
     }
 
     while (true) {
-        VolumeControlMessage message;
+        IPCMessage message;
         if (xQueueReceive(volumeChangeQueue, &(message), (TickType_t)10)) {
             if (message.messageType == ControlMessageTypeVolumeUp) {
                 this->increase_volume();

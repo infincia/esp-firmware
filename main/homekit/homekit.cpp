@@ -154,7 +154,7 @@ void Homekit::task() {
     ESP_LOGI(TAG, "HAP loop running");
 
     while (true) {
-        SensorMessage message;
+        IPCMessage message;
 
         if (xQueueReceive(homekitQueue, &(message), (TickType_t)10)) {
             if (message.messageType == EventTemperatureSensorValue) {
