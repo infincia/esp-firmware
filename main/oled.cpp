@@ -74,7 +74,7 @@ void OLED::start() {
 
     SSD1306_Update(&this->I2CDisplay);
 
-    SSD1306_SetFont(&this->I2CDisplay, &Font_roboto_black_54x72);
+    SSD1306_SetFont(&this->I2CDisplay, &Font_Tarable7Seg_32x64);
 
     xTaskCreate(&task_wrapper, "oled_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->oled_task_handle);
 }
