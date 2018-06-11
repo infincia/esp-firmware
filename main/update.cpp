@@ -114,6 +114,9 @@ bool Update::update(const char* url) {
             throw std::runtime_error("no update manifest found");
         } else if (res == 200) {
             ESP_LOGI(TAG, "received update manifest");
+        } else {
+            ESP_LOGE(TAG, "unknown manifest request error: %d", res);
+            throw std::runtime_error("HTTP failed");
         }
         
         ESP_LOGD(TAG, "http request success: %d", res);
