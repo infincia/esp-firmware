@@ -80,7 +80,7 @@ bool Temperature::update() {
 #if defined(CONFIG_FIRMWARE_USE_WEB)
     {
         WebControlMessage message;
-        message.messageType = ControlMessageTypeTemperatureEvent;
+        message.messageType = EventTemperatureSensorValue;
         message.temperature = this->current_temperature;
         message.humidity = this->current_humidity;
 

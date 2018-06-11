@@ -322,7 +322,7 @@ void Web::task() {
             if (message.messageType == ControlMessageTypeVolumeEvent) {
                 auto current_volume = message.volumeLevel;
                 this->send_volume(current_volume);
-            } else if (message.messageType == ControlMessageTypeTemperatureEvent) {
+            } else if (message.messageType == EventTemperatureSensorValue) {
                 auto current_temperature = message.temperature;
                 auto current_humidity = message.humidity;
                 this->send_temperature(current_temperature, current_humidity);
