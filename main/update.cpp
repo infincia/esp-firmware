@@ -165,7 +165,7 @@ bool Update::update(const char* url) {
             return false;
         }
     } catch (std::exception &ex) {
-        ESP_LOGE(TAG, "update failed: %s", ex.what());
+        ESP_LOGE(TAG, "manifest download failed: %s", ex.what());
         return false;
     }
 
@@ -209,7 +209,7 @@ bool Update::update(const char* url) {
         }
 
     } catch (std::exception &ex) {
-        ESP_LOGE(TAG, "update failed: %s", ex.what());
+        ESP_LOGE(TAG, "firmware download failed: %s", ex.what());
     }
 
     if (ESP_OK != esp_ota_end(update_handle)) {
