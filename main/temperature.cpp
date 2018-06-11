@@ -84,7 +84,7 @@ bool Temperature::update() {
         message.temperature = this->current_temperature;
         message.humidity = this->current_humidity;
 
-        if (!xQueueSend(webQueue, (void *)&message, (TickType_t)0)) {
+        if (!xQueueOverwrite(webQueue, (void *)&message)) {
             ESP_LOGV(TAG, "Sending web temperature event failed");
         }
     }
@@ -98,13 +98,13 @@ bool Temperature::update() {
         message.humidity = this->current_humidity;
 
 #if defined(CONFIG_FIRMWARE_USE_AWS)
-        if (!xQueueSend(awsQueue, (void *)&message, (TickType_t)0)) {
+        if (!xQueueOverwrite(awsQueue, (void *)&message)) {
             ESP_LOGV(TAG, "Sending aws sensor event failed");
         }
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
-        if (!xQueueSend(homekitQueue, (void *)&message, (TickType_t)0)) {
+        if (!xQueueOverwrite(homekitQueue, (void *)&message)) {
             ESP_LOGV(TAG, "Sending homekit sensor event failed");
         }
 #endif

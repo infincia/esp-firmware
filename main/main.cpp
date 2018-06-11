@@ -132,13 +132,13 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
 
 void setup_queues() {
     #if defined(CONFIG_FIRMWARE_USE_AMP)
-    volumeChangeQueue = xQueueCreate(3, sizeof(VolumeControlMessage));
+    volumeChangeQueue = xQueueCreate(1, sizeof(VolumeControlMessage));
     if (volumeChangeQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create volume queue, restarting");
         abort();
     }
 
-    displayQueue = xQueueCreate(2, sizeof(DisplayControlMessage));
+    displayQueue = xQueueCreate(1, sizeof(DisplayControlMessage));
     if (displayQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create display queue, restarting");
         abort();
@@ -146,7 +146,7 @@ void setup_queues() {
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_WEB)
-    webQueue = xQueueCreate(2, sizeof(WebControlMessage));
+    webQueue = xQueueCreate(1, sizeof(WebControlMessage));
     if (webQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create web queue, restarting");
         abort();
@@ -154,7 +154,7 @@ void setup_queues() {
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_AWS)
-    awsQueue = xQueueCreate(2, sizeof(SensorMessage));
+    awsQueue = xQueueCreate(1, sizeof(SensorMessage));
     if (awsQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create aws queue, restarting");
         abort();
@@ -162,14 +162,14 @@ void setup_queues() {
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
-    homekitQueue = xQueueCreate(2, sizeof(SensorMessage));
+    homekitQueue = xQueueCreate(1, sizeof(SensorMessage));
     if (homekitQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create homekit queue, restarting");
         abort();
     }
     #endif
 
-    ledQueue = xQueueCreate(2, sizeof(LEDMessage));
+    ledQueue = xQueueCreate(1, sizeof(LEDMessage));
     if (ledQueue == nullptr) {
         ESP_LOGE(TAG, "failed to create LED queue, restarting");
         abort();
