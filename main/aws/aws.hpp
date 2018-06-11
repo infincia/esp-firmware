@@ -14,7 +14,7 @@ public:
 	AWS();
 	virtual ~AWS();
 	void task();
-    void start(std::string& device_name, std::string& device_type, std::string& device_id);
+    void start(std::string& device_name);
 
 	void ShadowUpdateStatusCallback(const char *pThingName, 
                                     ShadowActions_t action, 
@@ -26,8 +26,6 @@ private:
     TaskHandle_t aws_task_handle;
 
 	std::string device_name;
-	std::string device_type;
-    std::string device_id;
  
  	bool shadowUpdateInProgress = false;
 
