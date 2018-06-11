@@ -45,12 +45,10 @@ AWS::AWS() { }
 AWS::~AWS() = default;
 
 
-void AWS::start(std::string& device_name, std::string& device_type, std::string& device_id) {
+void AWS::start(std::string& device_name) {
     ESP_LOGI(TAG, "start");
 
     this->device_name = device_name;
-    this->device_type = device_type;
-    this->device_id = device_id;
     
     xTaskCreate(&task_wrapper, "aws_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
 }

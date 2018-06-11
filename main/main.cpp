@@ -189,7 +189,7 @@ void setup_sensor(std::string& device_name, std::string& device_type, std::strin
 
     #if defined(CONFIG_FIRMWARE_USE_AWS)
     ESP_LOGI(TAG, "+ AWS");
-    aws.start(device_name, device_type, device_id);
+    aws.start(device_name);
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
