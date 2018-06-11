@@ -178,9 +178,9 @@ static void handle_set_identify(HttpRequest *request, HttpResponse *response, vo
 
     auto json_response = JSON::createObject();
 
-    LEDMessage message;
+    IPCMessage message;
     message.messageType = EventIdentifyLED;
-    message.state = identify;
+    message.led_state = identify;
 
     if (!xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "Setting LED identify failed");
@@ -314,7 +314,7 @@ void Web::task() {
 #endif
 
     while (true) {
-        WebControlMessage message;
+        IPCMessage message;
         if (xQueueReceive(webQueue, &(message), (TickType_t)10)) {
             ESP_LOGV(TAG, "message received");
 

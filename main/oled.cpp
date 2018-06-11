@@ -101,7 +101,7 @@ void OLED::task() {
     vTaskDelay(15000 / portTICK_RATE_MS);
 
     while (true) {
-        DisplayControlMessage message;
+        IPCMessage message;
         if (xQueueReceive(displayQueue, &(message), (TickType_t)10)) {
             if (message.messageType == ControlMessageTypeDisplayText) {
                 set_text(message.text);

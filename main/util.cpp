@@ -19,7 +19,7 @@ unsigned long IRAM_ATTR millis() {
  */
 
 bool volume_up() {
-    VolumeControlMessage volume_message;
+    IPCMessage volume_message;
     volume_message.messageType = ControlMessageTypeVolumeUp;
 
     if (!xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
@@ -31,7 +31,7 @@ bool volume_up() {
 
 
 bool volume_down() {
-    VolumeControlMessage volume_message;
+    IPCMessage volume_message;
     volume_message.messageType = ControlMessageTypeVolumeDown;
 
     if (!xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
@@ -43,7 +43,7 @@ bool volume_down() {
 
 
 bool volume_set(uint8_t level) {
-    VolumeControlMessage volume_message;
+    IPCMessage volume_message;
     volume_message.messageType = ControlMessageTypeVolumeSet;
     volume_message.volumeLevel = level;
 
@@ -56,9 +56,9 @@ bool volume_set(uint8_t level) {
 
 
 bool signal_identify_on_device(bool state) {
-    LEDMessage message;
+    IPCMessage message;
     message.messageType = EventIdentifyLED;
-    message.state = state;
+    message.led_state = state;
 
     if (xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send identify message on ledQueue");
@@ -68,9 +68,9 @@ bool signal_identify_on_device(bool state) {
 }
 
 bool signal_error_on_device(bool state) {
-    LEDMessage message;
+    IPCMessage message;
     message.messageType = EventErrorLED;
-    message.state = state;
+    message.led_state = state;
 
     if (xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send error message on ledQueue");
@@ -80,9 +80,9 @@ bool signal_error_on_device(bool state) {
 }
 
 bool signal_ready_on_device(bool state) {
-    LEDMessage message;
+    IPCMessage message;
     message.messageType = EventReadyLED;
-    message.state = state;
+    message.led_state = state;
 
     if (xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send ready message on ledQueue");

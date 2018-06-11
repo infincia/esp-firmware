@@ -79,7 +79,7 @@ bool Temperature::update() {
 
 #if defined(CONFIG_FIRMWARE_USE_WEB)
     {
-        WebControlMessage message;
+        IPCMessage message;
         message.messageType = EventTemperatureSensorValue;
         message.temperature = this->current_temperature;
         message.humidity = this->current_humidity;
@@ -94,7 +94,7 @@ bool Temperature::update() {
 
 #if defined(CONFIG_FIRMWARE_USE_AWS) || defined(CONFIG_FIRMWARE_USE_HOMEKIT)
     {
-        SensorMessage message;
+        IPCMessage message;
         message.messageType = EventTemperatureSensorValue;
         message.temperature = this->current_temperature;
         message.humidity = this->current_humidity;

@@ -186,7 +186,7 @@ void AWS::task() {
 
         rc = aws_iot_shadow_yield(&mqttClient, 200);
 
-        SensorMessage message;
+        IPCMessage message;
         if (xQueueReceive(awsQueue, &(message), (TickType_t)10)) {
             if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
