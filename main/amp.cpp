@@ -105,6 +105,8 @@ bool Amp::decrease_volume() {
  */
 
 void Amp::task() {
+    ESP_LOGI(TAG, "running");
+    
     int32_t saved_volume;
 
     if (get_kv(VOLUME_LEVEL_KEY, &saved_volume)) {

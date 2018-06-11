@@ -286,7 +286,7 @@ void Web::start(std::string& device_name, std::string& device_type) {
 
 
 void Web::task() {
-    ESP_LOGD(TAG, "task running");
+    ESP_LOGI(TAG, "running");
 
     /* Wait for WiFI to show as connected */
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
