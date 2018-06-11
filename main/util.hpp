@@ -15,3 +15,5 @@ bool get_kv(const char* key, std::string &value);
 
 bool set_kv(const char* key, int32_t value);
 bool get_kv(const char* key, int32_t* value);
+
+const char* error_string(esp_err_t err);
