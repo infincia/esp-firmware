@@ -81,7 +81,7 @@ AWS aws;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
-Homekit *homekit;
+Homekit homekit;
 #endif
 
 
@@ -194,7 +194,7 @@ void setup_sensor(std::string& device_name, std::string& device_type, std::strin
 
     #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
     ESP_LOGI(TAG, "+ Homekit");
-    homekit = new Homekit(device_name, device_type, device_id);
+    homekit.start(device_name, device_type, device_id);
     #endif
 }
 

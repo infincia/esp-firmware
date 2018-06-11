@@ -36,15 +36,22 @@ void* identify_read(void* arg)
     return (void*)true;
 }
 
-Homekit::Homekit(std::string& device_name, std::string& device_type, std::string& device_id):
-device_name(device_name),
-device_type(device_type),
-device_id(device_id) {
-    xTaskCreate(&task_wrapper, "homekit_task", 16384, this, (tskIDLE_PRIORITY + 10), &this->homekit_task_handle);
-}
+Homekit::Homekit() { }
 
 
 Homekit::~Homekit() = default;
+
+
+void Homekit::start(std::string& device_name, std::string& device_type, std::string& device_id) {
+
+    ESP_LOGD(TAG, "start");
+
+    this->device_name = device_name;
+    this->device_type = device_type;
+    this->device_id = device_id;
+    
+    xTaskCreate(&task_wrapper, "homekit_task", 16384, this, (tskIDLE_PRIORITY + 10), &this->homekit_task_handle);
+}
 
 
 static void* _temperature_read(void* arg)

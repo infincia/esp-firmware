@@ -9,9 +9,10 @@
 
 class Homekit {
 public:
-	Homekit(std::string& device_name, std::string& device_type, std::string& device_id);
+	Homekit();
 	virtual ~Homekit();
 	void task();
+    void start(std::string& device_name, std::string& device_type, std::string& device_id);
 
 
 	std::string device_name;
