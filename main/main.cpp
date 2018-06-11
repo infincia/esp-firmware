@@ -264,10 +264,6 @@ void setup_device(std::string& device_id) {
         ESP_LOGE( TAG, "not provisioned, use the web interface or console to set up device");
         device_type = "none";
         device_name = "none";
-
-        #if defined(CONFIG_FIRMWARE_USE_WEB)
-        web.start(device_name, device_type, device_id);
-        #endif
     }
 
     ESP_LOGI(TAG, "provisioned %s:%s", device_name.c_str(), device_type.c_str());
@@ -282,6 +278,9 @@ void setup_device(std::string& device_id) {
     console.start();
     #endif
 
+    #if defined(CONFIG_FIRMWARE_USE_WEB)
+    web.start(device_name, device_type, device_id);
+    #endif
 
     if (provisioned) {
         if (device_type == "amp") {
