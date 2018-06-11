@@ -187,8 +187,6 @@ void AWS::task() {
             if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
                 this->humidity = message.humidity;
-            } else {
-                ESP_LOGW(TAG, "unknown message type: %d", message.messageType);
             }
         }
 

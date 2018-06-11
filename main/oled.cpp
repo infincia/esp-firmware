@@ -107,8 +107,6 @@ void OLED::task() {
         if (xQueueReceive(displayQueue, &(message), (TickType_t)10)) {
             if (message.messageType == ControlMessageTypeDisplayText) {
                 set_text(message.text);
-            } else {
-                ESP_LOGW(TAG, "unknown message type received: %d", message.messageType);
             }
         }
         vTaskDelay(10 / portTICK_RATE_MS);

@@ -60,8 +60,6 @@ void LED::task() {
                 this->error = message.state;
             } else if (message.messageType == EventReadyLED) {
                 this->ready = message.state;
-            } else {
-                ESP_LOGW(TAG, "unknown message type received: %d", message.messageType);
             }
         }
 

@@ -170,8 +170,6 @@ void Homekit::task() {
                 }
                 //xSemaphoreGive(ev_mutex);
 
-            } else {
-                ESP_LOGW(TAG, "unknown message type: %d", message.messageType);
             }
         }
     }
