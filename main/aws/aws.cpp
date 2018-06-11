@@ -98,6 +98,7 @@ void AWS::task() {
     /* Wait for device provisioning */
     xEventGroupWaitBits(provisioning_event_group, PROVISIONED_BIT, false, true, portMAX_DELAY);
 
+    ESP_LOGI(TAG, "setting up AWS connection");
 
     IoT_Error_t rc = FAILURE;
     char JsonDocumentBuffer[MAX_LENGTH_OF_UPDATE_JSON_BUFFER];
@@ -153,9 +154,14 @@ void AWS::task() {
 
     bool connected = false;
 
+    ESP_LOGI(TAG, "starting loop");
+
+
     while (true) {
         if (!connected) {
             vTaskDelay(15000 / portTICK_RATE_MS);
+
+            ESP_LOGI(TAG, "AWS not connected yet, connecting....");
 
             rc = aws_iot_shadow_init(&mqttClient, &sp);
             if(SUCCESS != rc) {
@@ -185,6 +191,7 @@ void AWS::task() {
             if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
                 this->humidity = message.humidity;
+                ESP_LOGI(TAG, "received temperature reading");
             }
         }
 
