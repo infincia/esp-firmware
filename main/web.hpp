@@ -15,11 +15,10 @@ public:
 	Web(uint16_t port);
 	virtual ~Web();
 	void task();
-    void start(std::string& device_name, std::string& device_type, std::string& device_id);
+    void start(std::string& device_name, std::string& device_type);
 
 	std::string device_name;
 	std::string device_type;
-    std::string device_id;
     
 private:
 	TaskHandle_t web_task_handle;

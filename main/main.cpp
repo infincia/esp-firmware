@@ -279,7 +279,7 @@ void setup_device(std::string& device_id) {
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_WEB)
-    web.start(device_name, device_type, device_id);
+    web.start(device_name, device_type);
     #endif
 
     if (provisioned) {
