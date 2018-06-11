@@ -24,6 +24,7 @@
 
 static const char *TAG = "[Web]";
 
+#if defined(FIRMWARE_USE_MDNS)
 static void initialise_mdns(const char* name, uint16_t port) {
     //initialize mDNS
     ESP_ERROR_CHECK( mdns_init() );
@@ -42,6 +43,7 @@ static void initialise_mdns(const char* name, uint16_t port) {
     //initialize service
     ESP_ERROR_CHECK( mdns_service_add(name, "_http", "_tcp", port, serviceTxtData, 1) );
 }
+#endif
 
 /**
  *  Websocket connection tracking 
@@ -308,7 +310,9 @@ void Web::task() {
 
     this->webServer.start(this->port);
 
+#if defined(FIRMWARE_USE_MDNS)
     initialise_mdns(this->device_name.c_str(), this->port);
+#endif
 
     while (true) {
         WebControlMessage message;

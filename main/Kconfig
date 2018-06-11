@@ -7,6 +7,12 @@ config FIRMWARE_USE_AMP
     help
         Enable Amplifier Support via MAX9744
 
+config FIRMWARE_USE_MDNS
+    bool "Enable mDNS broadcasts"
+    default false
+    help
+        Enable mDNS broadcasts for web service
+
 
 config FIRMWARE_USE_AWS
     bool "Enable AWS"
