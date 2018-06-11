@@ -6,7 +6,6 @@ typedef enum message_type {
     ControlMessageTypeVolumeSet,
     ControlMessageTypeDisplayText,
     ControlMessageTypeVolumeEvent,
-    ControlMessageTypeTemperatureEvent,
     EventTemperatureSensorValue,
     EventIdentifyLED,
     EventErrorLED,
