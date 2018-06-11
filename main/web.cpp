@@ -275,12 +275,11 @@ Web::~Web() {
     this->webServer.stop();
 }
 
-void Web::start(std::string& device_name, std::string& device_type, std::string& device_id) {
+void Web::start(std::string& device_name, std::string& device_type) {
     ESP_LOGD(TAG, "start");
 
     this->device_name = device_name;
     this->device_type = device_type;
-    this->device_id = device_id;
 
     xTaskCreate(&task_wrapper, "web_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
 }
