@@ -70,7 +70,7 @@ bool Temperature::update() {
     esp_err_t ret = readSensors(this->port, &sensor_data);
 
     if (ret != ESP_OK) {
-        // ESP_LOGE(TAG, "sensor reading failed");
+        ESP_LOGE(TAG, "sensor reading failed");
         return false;
     }
 
