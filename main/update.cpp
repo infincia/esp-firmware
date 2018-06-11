@@ -80,39 +80,7 @@ bool Update::update(const char* url) {
 
     err = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &update_handle);
     if (err != ESP_OK) {
-        const char* msg;
-        switch (err) {
-            case ESP_OK: //OTA operation commenced successfully.
-                msg = "ESP_OK";
-                break;
-            case ESP_ERR_INVALID_ARG: //partition or out_handle arguments were NULL, or partition doesn't point to an OTA app partition.
-                msg = "ESP_ERR_INVALID_ARG";
-                break;
-            case ESP_ERR_NO_MEM: //Cannot allocate memory for OTA operation.
-                msg = "ESP_ERR_NO_MEM";
-                break;
-            case ESP_ERR_OTA_PARTITION_CONFLICT: //Partition holds the currently running firmware, cannot update in place.
-                msg = "ESP_ERR_OTA_PARTITION_CONFLICT";
-                break;
-            case ESP_ERR_NOT_FOUND: //Partition argument not found in partition table.
-                msg = "ESP_ERR_NOT_FOUND";
-                break;
-            case ESP_ERR_OTA_SELECT_INFO_INVALID: //The OTA data partition contains invalid data.
-                msg = "ESP_ERR_OTA_SELECT_INFO_INVALID";
-                break;
-            case ESP_ERR_INVALID_SIZE: //Partition doesn't fit in configured flash size.
-                msg = "ESP_ERR_INVALID_SIZE";
-                break;
-            case ESP_ERR_FLASH_OP_TIMEOUT:
-                msg = "ESP_ERR_FLASH_OP_TIMEOUT";
-                break;
-            case ESP_ERR_FLASH_OP_FAIL: //Flash write failed.
-                msg = "ESP_ERR_FLASH_OP_FAIL";
-                break;
-            default:
-                msg = "Unknown error";
-                break;
-        }
+        const char* msg = error_string(err);
         ESP_LOGE(TAG, "esp_ota_begin failed: %s", msg);
         return false;
     }
@@ -188,7 +156,8 @@ bool Update::update(const char* url) {
         http_client.set_read_cb([&] (const char* buf, int length) {
             err = esp_ota_write(update_handle, buf, length);
             if (err != ESP_OK) {
-                ESP_LOGD(TAG, "esp_ota_write: %d", err);
+                const char* msg = error_string(err);
+                ESP_LOGD(TAG, "esp_ota_write: %s", msg);
             }
             binary_file_length += length;
             ESP_LOGD(TAG, "written %d", binary_file_length);
@@ -212,14 +181,17 @@ bool Update::update(const char* url) {
         ESP_LOGE(TAG, "firmware download failed: %s", ex.what());
     }
 
-    if (ESP_OK != esp_ota_end(update_handle)) {
-        ESP_LOGE(TAG, "esp_ota_end failed");
+    err = esp_ota_end(update_handle);
+    if (err != ESP_OK) {
+        const char* msg = error_string(err);
+        ESP_LOGE(TAG, "esp_ota_end failed: %s", msg);
         return false;
     }
 
     err = esp_ota_set_boot_partition(update_partition);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "boot select error: %d", err);
+        const char* msg = error_string(err);
+        ESP_LOGE(TAG, "boot select error: %s", msg);
         return false;
     }
 
