@@ -191,7 +191,7 @@ void AWS::task() {
             if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
                 this->humidity = message.humidity;
-                ESP_LOGI(TAG, "received temperature reading");
+                ESP_LOGD(TAG, "received temperature reading");
             }
         }
 
