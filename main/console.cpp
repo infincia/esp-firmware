@@ -74,6 +74,8 @@ void Console::start() {
 
 
 void Console::task() {
+    ESP_LOGI(TAG, "running");
+    
     /* Wait for filesystem to be available */
     //xEventGroupWaitBits(filesystem_event_group, FS_READY_BIT, false, true, portMAX_DELAY);
 

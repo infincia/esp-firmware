@@ -128,7 +128,7 @@ void hap_object_init(void* arg) {
  */
 
 void Homekit::task() {
-    ESP_LOGI(TAG, "HAP task started");
+    ESP_LOGI(TAG, "running");
     
     vSemaphoreCreateBinary(ev_mutex);
 

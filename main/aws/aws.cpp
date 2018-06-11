@@ -92,6 +92,8 @@ void AWS::ShadowUpdateStatusCallback(const char *pThingName,
  */
 
 void AWS::task() {    
+    ESP_LOGI(TAG, "running");
+
     /* Wait for wifi to be available */
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
 

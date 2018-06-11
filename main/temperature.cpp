@@ -126,6 +126,8 @@ bool Temperature::update() {
  */
 
 void Temperature::task() {
+    ESP_LOGI(TAG, "running");
+    
     while (true) {
         this->update();
         vTaskDelay(2000 / portTICK_RATE_MS);

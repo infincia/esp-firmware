@@ -38,6 +38,8 @@ void LED::start() {
  */
 
 void LED::task() {
+    ESP_LOGI(TAG, "running");
+
     gpio_num_t error_gpio = static_cast<gpio_num_t>(CONFIG_FIRMWARE_ERROR_GPIO);
     gpio_pad_select_gpio(error_gpio);
     gpio_set_direction(error_gpio, GPIO_MODE_OUTPUT);

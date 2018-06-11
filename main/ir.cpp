@@ -86,6 +86,8 @@ void IR::start() {
  */
 
 void IR::task() {
+    ESP_LOGI(TAG, "running");
+
     RingbufHandle_t ringBuf = NULL;
     rmt_get_ringbuf_handle(RMT_CHANNEL_0, &ringBuf);
 
