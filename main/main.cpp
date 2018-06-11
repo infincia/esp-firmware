@@ -35,6 +35,8 @@
 
 static const char *TAG = "[Main]";
 
+TaskHandle_t stats_task_handle;
+
 TaskHandle_t setup_task_handle;
 
 /**
@@ -320,6 +322,21 @@ static void device_setup_task(void *param) {
 }
 
 
+static void stats_task(void *param) {
+    static const char *_TAG = "[Stat]";
+
+    while (true) {
+
+        size_t free_heap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
+        size_t min_free_heap = heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT);
+
+        ESP_LOGI(_TAG, "free: %d, min: %d", free_heap, min_free_heap);
+
+        vTaskDelay(5000 / portTICK_RATE_MS);
+    }
+}
+
+
 /**
  * Entry point
  *
@@ -350,6 +367,7 @@ void app_main() {
 
     setup_wifi();
 
+    xTaskCreate(&stats_task, "stats_task", 2048, NULL, (tskIDLE_PRIORITY + 10), &stats_task_handle);
 
     xTaskCreate(&device_setup_task, "device_setup_task", 8192, NULL, (tskIDLE_PRIORITY + 10), &setup_task_handle);
 }

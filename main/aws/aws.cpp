@@ -212,9 +212,6 @@ void AWS::task() {
                 last = millis();
 
                 size_t free_heap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
-                size_t min_free_heap = heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT);
-
-                ESP_LOGI("[Heap]", "free: %d, min: %d", free_heap, min_free_heap);
 
                 this->heap = (uint32_t)free_heap;
 
