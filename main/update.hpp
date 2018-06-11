@@ -14,15 +14,13 @@ public:
 	Update(const char* update_manifest_url);
 	virtual ~Update();
 	void task();
-    void start(std::string& device_name, std::string& device_type, std::string& device_id);
+    void start(std::string& device_name);
 private:
 	bool update(const char* url);
 
 	TaskHandle_t update_task_handle;
 
 	std::string device_name;
-	std::string device_type;
-    std::string device_id;
 
     const char* update_url;
     
