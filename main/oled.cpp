@@ -65,8 +65,7 @@ void OLED::start() {
 
     SSD1306_SetHFlip(&this->I2CDisplay, true);
     SSD1306_SetVFlip(&this->I2CDisplay, true);
-    SSD1306_Clear(&this->I2CDisplay, SSD_COLOR_BLACK);
-    SSD1306_SetContrast(&this->I2CDisplay, 10);
+    SSD1306_SetContrast(&this->I2CDisplay, 30);
 
     SSD1306_Clear(&this->I2CDisplay, SSD_COLOR_BLACK);
     SSD1306_SetFont(&this->I2CDisplay, &Font_droid_sans_mono_13x24);
@@ -76,7 +75,6 @@ void OLED::start() {
     SSD1306_Update(&this->I2CDisplay);
 
     SSD1306_SetFont(&this->I2CDisplay, &Font_roboto_black_54x72);
-    SSD1306_SetContrast(&this->I2CDisplay, 30);
 
     xTaskCreate(&task_wrapper, "oled_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->oled_task_handle);
 }
