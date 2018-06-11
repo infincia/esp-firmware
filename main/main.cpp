@@ -271,7 +271,7 @@ void setup_device(std::string& device_id) {
     led.start();
 
     #if defined(CONFIG_FIRMWARE_USE_OTA)
-    update.start(device_name, device_type, device_id);
+    update.start(device_name);
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_CONSOLE)

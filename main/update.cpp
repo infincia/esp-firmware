@@ -36,10 +36,8 @@ Update::Update(const char* update_manifest_url): update_url(update_manifest_url)
 Update::~Update() = default;
 
 
-void Update::start(std::string& device_name, std::string& device_type, std::string& device_id) {
+void Update::start(std::string& device_name) {
     this->device_name = device_name;
-    this->device_type = device_type;
-    this->device_id = device_id;
 
     ESP_LOGI(TAG, "start");
 
