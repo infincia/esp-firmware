@@ -69,7 +69,7 @@ void Console::start() {
     /* Set command history size */
     linenoiseHistorySetMaxLen(100);
 
-    xTaskCreate(&task_wrapper, "console_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->console_task_handle);
+    xTaskCreate(&task_wrapper, "console_task", 4096, this, (tskIDLE_PRIORITY + 10), &this->console_task_handle);
 }
 
 

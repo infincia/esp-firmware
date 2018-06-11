@@ -78,7 +78,7 @@ void OLED::start() {
     SSD1306_SetFont(&this->I2CDisplay, &Font_roboto_black_54x72);
     SSD1306_SetContrast(&this->I2CDisplay, 30);
 
-    xTaskCreate(&task_wrapper, "oled_task", 4096, this, (tskIDLE_PRIORITY + 10), &this->oled_task_handle);
+    xTaskCreate(&task_wrapper, "oled_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->oled_task_handle);
 }
 
 
