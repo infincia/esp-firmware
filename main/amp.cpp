@@ -63,7 +63,7 @@ bool Amp::set_volume(uint8_t volume) {
         message1.messageType = ControlMessageTypeDisplayText;
         strcpy(message1.text, vols);
 
-        if (!xQueueSend(displayQueue, (void *)&message1, (TickType_t)0)) {
+        if (!xQueueOverwrite(displayQueue, (void *)&message1)) {
             ESP_LOGE(TAG, "Setting display text failed");
         }
 
@@ -72,7 +72,7 @@ bool Amp::set_volume(uint8_t volume) {
         message2.messageType = ControlMessageTypeVolumeEvent;
         message2.volumeLevel = current_volume;
 
-        if (!xQueueSend(webQueue, (void *)&message2, (TickType_t)0)) {
+        if (!xQueueOverwrite(webQueue, (void *)&message2)) {
             ESP_LOGE(TAG, "Sending web volume event failed");
         }
 #endif

@@ -22,7 +22,7 @@ bool volume_up() {
     VolumeControlMessage volume_message;
     volume_message.messageType = ControlMessageTypeVolumeUp;
 
-    if (xQueueSendToFront(volumeChangeQueue, (void *)&volume_message, (TickType_t)10) != pdPASS) {
+    if (!xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
         ESP_LOGE(TAG, "failed to send volume up on volumeChangeQueue");
         return false;
     }
@@ -34,7 +34,7 @@ bool volume_down() {
     VolumeControlMessage volume_message;
     volume_message.messageType = ControlMessageTypeVolumeDown;
 
-    if (xQueueSendToFront(volumeChangeQueue, (void *)&volume_message, (TickType_t)10) != pdPASS) {
+    if (!xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
         ESP_LOGE(TAG, "failed to send volume down on volumeChangeQueue");
         return false;
     }
@@ -47,7 +47,7 @@ bool volume_set(uint8_t level) {
     volume_message.messageType = ControlMessageTypeVolumeSet;
     volume_message.volumeLevel = level;
 
-    if (xQueueSendToFront(volumeChangeQueue, (void *)&volume_message, (TickType_t)10) != pdPASS) {
+    if (xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
         ESP_LOGE(TAG, "failed to send volume set on volumeChangeQueue");
         return false;
     }
@@ -60,7 +60,7 @@ bool signal_identify_on_device(bool state) {
     message.messageType = EventIdentifyLED;
     message.state = state;
 
-    if (xQueueSendToFront(ledQueue, (void *)&message, (TickType_t)10) != pdPASS) {
+    if (xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send identify message on ledQueue");
         return false;
     }
@@ -72,7 +72,7 @@ bool signal_error_on_device(bool state) {
     message.messageType = EventErrorLED;
     message.state = state;
 
-    if (xQueueSendToFront(ledQueue, (void *)&message, (TickType_t)10) != pdPASS) {
+    if (xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send error message on ledQueue");
         return false;
     }
@@ -84,7 +84,7 @@ bool signal_ready_on_device(bool state) {
     message.messageType = EventReadyLED;
     message.state = state;
 
-    if (xQueueSendToFront(ledQueue, (void *)&message, (TickType_t)10) != pdPASS) {
+    if (xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send ready message on ledQueue");
         return false;
     }

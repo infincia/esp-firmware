@@ -180,7 +180,7 @@ static void handle_set_identify(HttpRequest *request, HttpResponse *response, vo
     message.messageType = EventIdentifyLED;
     message.state = identify;
 
-    if (!xQueueSend(ledQueue, (void *)&message, (TickType_t)0)) {
+    if (!xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "Setting LED identify failed");
         json_response.setBoolean("success", false); 
     } else {
