@@ -88,7 +88,6 @@ bool Update::update(const char* url) {
     long timeout = 5000;
 
 
-    ESP_LOGI(TAG, "starting version check from %s", VERSION);
     char user_agent[32];
     snprintf(user_agent, sizeof(user_agent), "%s/%s", this->device_name.c_str(), VERSION);
 
@@ -141,6 +140,10 @@ bool Update::update(const char* url) {
     try {
         Semver current_version(VERSION);
         Semver available_version(available_version_s);
+
+        ESP_LOGI(TAG, "current version: %s", current_version.string().c_str());
+
+        ESP_LOGI(TAG, "found latest update: %s", available_version.string().c_str());
 
         if (available_version <= current_version) {
             ESP_LOGI(TAG, "no update available");
