@@ -327,8 +327,6 @@ void Web::task() {
                 auto current_temperature = message.temperature;
                 auto current_humidity = message.humidity;
                 this->send_temperature(current_temperature, current_humidity);
-            } else {
-                ESP_LOGW(TAG, "unknown message type received: %d", message.messageType);
             }
 #endif
         }

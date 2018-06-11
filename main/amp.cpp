@@ -124,8 +124,6 @@ void Amp::task() {
                 this->decrease_volume();
             } else if (message.messageType == ControlMessageTypeVolumeSet) {
                 this->set_volume(message.volumeLevel);
-            } else {
-                ESP_LOGW(TAG, "unknown message type received: %d", message.messageType);
             }
         }
         vTaskDelay(50 / portTICK_RATE_MS);
