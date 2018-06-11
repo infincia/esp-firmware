@@ -282,7 +282,7 @@ void Web::start(std::string& device_name, std::string& device_type, std::string&
     this->device_type = device_type;
     this->device_id = device_id;
 
-    xTaskCreate(&task_wrapper, "web_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
+    xTaskCreate(&task_wrapper, "web_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
 }
 
 
