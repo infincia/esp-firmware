@@ -112,8 +112,12 @@ bool Update::update(const char* url) {
             throw std::runtime_error("server error");
         } else if (res == 404) {
             throw std::runtime_error("no update manifest found");
+        } else if (res == 200) {
+            ESP_LOGI(TAG, "received update manifest");
         }
         
+        ESP_LOGD(TAG, "http request success: %d", res);
+
         std::string body(text);
 
         auto m = JSON::parseObject(body);
@@ -154,6 +158,7 @@ bool Update::update(const char* url) {
         return false;    
     }
 
+    ESP_LOGI(TAG, "beginning firmware upgrade");
 
     try {
         http_client.set_read_cb([&] (const char* buf, int length) {
@@ -165,6 +170,8 @@ bool Update::update(const char* url) {
             binary_file_length += length;
             ESP_LOGD(TAG, "written %d", binary_file_length);
         });
+
+        ESP_LOGI(TAG, "requesting firmware binary from server: %s", firmware_url.c_str());
 
         res = http_client.get(firmware_url.c_str());
         ESP_LOGD(TAG, "http request success: %d", res);
@@ -184,12 +191,16 @@ bool Update::update(const char* url) {
         ESP_LOGE(TAG, "firmware download failed: %s", ex.what());
     }
 
+    ESP_LOGI(TAG, "finished writing firmware to flash, closing OTA session");
+
     err = esp_ota_end(update_handle);
     if (err != ESP_OK) {
         const char* msg = error_string(err);
         ESP_LOGE(TAG, "esp_ota_end failed: %s", msg);
         return false;
     }
+
+    ESP_LOGI(TAG, "updating OTA boot partition");
 
     err = esp_ota_set_boot_partition(update_partition);
     if (err != ESP_OK) {
