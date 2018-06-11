@@ -239,7 +239,7 @@ void Update::task() {
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
 
     // wait 60s before attempting first update check at boot
-    vTaskDelay(60000 / portTICK_RATE_MS);
+    vTaskDelay(20000 / portTICK_RATE_MS);
 
 
     while (true) {
