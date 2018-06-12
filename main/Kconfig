@@ -90,20 +90,6 @@ config FIRMWARE_HARDCODE_WIFI
     help
         Builds wifi credentials into firmware binary
 
-config FIRMWARE_WIFI_SSID
-    string "WiFi SSID"
-    depends on FIRMWARE_HARDCODE_WIFI
-    default ""
-    help
-        WiFi SSID
-
-config FIRMWARE_WIFI_PASSWORD
-    string "WiFi Password"
-    depends on FIRMWARE_HARDCODE_WIFI
-    default ""
-    help
-        WiFi Password
-
 config FIRMWARE_DEFAULT_VOLUME
     int "Default volume level"
     depends on FIRMWARE_USE_AMP
