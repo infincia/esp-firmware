@@ -2,6 +2,8 @@
 
 #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
 
+#include <string>
+
 #include "homekit.hpp"
 
 #include "hap.h"
@@ -142,6 +144,28 @@ void Homekit::task() {
     
     ESP_LOGI(TAG, "HAP task provisioned");
 
+
+    // load PIN from kv store, or generate and store a new one
+    if (!get_kv(HOMEKIT_PIN_KEY, pin)) {
+        uint8_t first = esp_random() % 999;
+        uint8_t second = esp_random() % 99;
+        uint8_t third = esp_random() % 999;
+
+
+        char _pin[11];
+        snprintf(_pin, sizeof(_pin), "%03d-%02d-%03d", first, second, third);
+
+        pin = _pin;
+
+        ESP_LOGI(TAG, "generated a new pin: %s", _pin);
+
+        if (!set_kv(HOMEKIT_PIN_KEY, pin)) {
+            ESP_LOGE(TAG, "pin could not be saved");
+            abort();
+        }
+    }
+
+
     hap_init();
 
     ESP_LOGI(TAG, "HAP init");
@@ -149,7 +173,7 @@ void Homekit::task() {
 
     hap_accessory_callback_t callback;
     callback.hap_object_init = hap_object_init;
-    a = hap_accessory_register((char*)this->device_name.c_str(), (char*)this->device_id.c_str(), (char*)"053-58-197", (char*)"Infincia LLC", HAP_ACCESSORY_CATEGORY_SENSOR, 811, 1, this, &callback);
+    a = hap_accessory_register((char*)this->device_name.c_str(), (char*)this->device_id.c_str(), (char*)pin.c_str(), (char*)"Infincia LLC", HAP_ACCESSORY_CATEGORY_SENSOR, 811, 1, this, &callback);
 
     ESP_LOGI(TAG, "HAP loop running");
 
