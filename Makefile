@@ -5,7 +5,7 @@
 
 PROJECT_NAME := firmware
 
-GIT_VERSION := $(shell git describe --always --tags)
+GIT_VERSION := $(shell git describe --always --tags --abbrev=0)
 WIFI_SSID := $(FIRMWARE_WIFI_SSID)
 WIFI_PASSWORD := $(FIRMWARE_WIFI_PASSWORD)
 
