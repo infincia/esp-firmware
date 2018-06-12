@@ -86,7 +86,7 @@ config FIRMWARE_USE_CONSOLE
 
 config FIRMWARE_HARDCODE_WIFI
     bool "Hardcode wifi credentials"
-    default false
+    default true
     help
         Builds wifi credentials into firmware binary
 
