@@ -10,3 +10,5 @@
 
 #define DEVICE_PROVISIONING_NAME_KEY "device-name"
 #define DEVICE_PROVISIONING_TYPE_KEY "device-type"
+
+#define HOMEKIT_PIN_KEY "homekit-pin"
