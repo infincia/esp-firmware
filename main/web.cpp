@@ -96,6 +96,7 @@ static void handle_get_status(HttpRequest *request, HttpResponse *response, void
 
     json.setInt("f", free_heap);
     json.setInt("m", min_free_heap);
+    json.setString("v", VERSION);
 
     response->sendData(json.toStringUnformatted());
 
