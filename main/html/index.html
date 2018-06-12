@@ -112,6 +112,8 @@ R"=====(
             </div>
 
             <div class="stats">
+                <span id='version'></span>
+                <br/>
                 <span id='free'></span>
                 <span id='min'></span>
             </div>
@@ -133,6 +135,7 @@ R"=====(
                 console.log(json);
                 document.getElementById('free').innerText = `Free: ${(json.f / 1024.0).toFixed(2)}K`;
                 document.getElementById('min').innerText = `Min: ${(json.m / 1024.0).toFixed(2)}K`;
+                document.getElementById('version').innerText = `Version: ${json.v}`;
             });
         }
 
