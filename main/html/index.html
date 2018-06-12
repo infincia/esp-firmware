@@ -221,7 +221,10 @@ R"=====(
         }
 
         load_provision();
-        load_status();
+        setInterval(() => {
+            load_status();
+        }, 3000);
+
     </script>
 </body>
 
