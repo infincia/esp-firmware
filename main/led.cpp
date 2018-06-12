@@ -28,7 +28,7 @@ LED::~LED() = default;
 void LED::start() {
     ESP_LOGI(TAG, "start");
 
-    xTaskCreate(&task_wrapper, "led_task", 768, this, (tskIDLE_PRIORITY + 10), &this->led_task_handle);
+    xTaskCreate(&task_wrapper, "led_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->led_task_handle);
 }
 
 
