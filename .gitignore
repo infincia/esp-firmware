@@ -6,7 +6,6 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 build
-sdkconfig
 sdkconfig.old
 .vscode/settings.json
 cmake-build-debug
