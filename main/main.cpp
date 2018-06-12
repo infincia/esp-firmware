@@ -221,8 +221,8 @@ void setup_wifi() {
     wifi_sta_config_t sta_config;
 
     #if defined(CONFIG_FIRMWARE_HARDCODE_WIFI)
-    strcpy((char *)sta_config.ssid, CONFIG_FIRMWARE_WIFI_SSID);
-    strcpy((char *)sta_config.password, CONFIG_FIRMWARE_WIFI_PASSWORD);
+    strcpy((char *)sta_config.ssid, FIRMWARE_WIFI_SSID);
+    strcpy((char *)sta_config.password, FIRMWARE_WIFI_PASSWORD);
     #else
     std::string ssid;
     std::string password;
