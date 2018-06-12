@@ -27,6 +27,8 @@ private:
 	float humidity = 0.0;
     uint32_t heap = 0;
 
+    std::string pin;
+
 };
 
 #endif /* HOMEKIT_H_ */
