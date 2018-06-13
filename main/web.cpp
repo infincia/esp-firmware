@@ -117,6 +117,15 @@ static void handle_get_provision(HttpRequest *request, HttpResponse *response, v
     json_response.setString("n", instance->device_name); 
     json_response.setString("t", instance->device_type); 
 
+    #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
+    std::string pin;
+    if (get_kv(HOMEKIT_PIN_KEY, pin)) {
+        json_response.setString("pin", pin); 
+    } else {
+        json_response.setString("pin", "N/A"); 
+    }
+    #endif
+
     response->sendData(json_response.toStringUnformatted());
     response->close();
 
