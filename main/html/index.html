@@ -104,6 +104,10 @@ R"=====(
             <div class="panel">
                 <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
             </div>
+            <div class="panel bordered">
+                    <span class="title">Homekit</span>
+                    <span class="value" type="text" id='pin'></span>
+            </div>
             <div class="panel">
                 <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
             </div>
@@ -148,6 +152,11 @@ R"=====(
                 console.log(json);
                 document.getElementById('name').value = json.n;
                 document.getElementById('type').value = json.t;
+                if (json.hasOwnProperty('pin')) {
+                    document.getElementById('pin').innerText = json.pin;
+                } else {
+                    document.getElementById('pin').style.display = "none";
+                }
             });
         }
 
