@@ -206,6 +206,49 @@ static void handle_set_identify(HttpRequest *request, HttpResponse *response, vo
 
 }
 
+#if defined(CONFIG_FIRMWARE_USE_AMP)
+
+static void handle_volume_up(HttpRequest *request, HttpResponse *response, void* ctx) {
+    response->addHeader("Content-Type", "application/json");
+    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+
+    auto json_response = JSON::createObject();
+
+    if (!volume_up()) {
+        ESP_LOGE(TAG, "Setting volume up");
+        json_response.setBoolean("success", false); 
+    } else {
+        json_response.setBoolean("success", true); 
+    }
+
+    response->sendData(json_response.toStringUnformatted());
+    response->close();
+
+    JSON::deleteObject(json_response);
+}
+
+static void handle_volume_down(HttpRequest *request, HttpResponse *response, void* ctx) {
+    response->addHeader("Content-Type", "application/json");
+    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+
+    auto json_response = JSON::createObject();
+
+    if (!volume_down()) {
+        ESP_LOGE(TAG, "Setting volume down failed");
+        json_response.setBoolean("success", false); 
+    } else {
+        json_response.setBoolean("success", true); 
+    }
+
+    response->sendData(json_response.toStringUnformatted());
+    response->close();
+
+    JSON::deleteObject(json_response);
+}
+
+#endif
+
+
 #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 static void handle_websocket(HttpRequest *request, HttpResponse *response, void* ctx) {
     auto ws = request->getWebSocket();
@@ -316,6 +359,12 @@ void Web::task() {
     this->webServer.addPathHandler("GET", "/provision", handle_get_provision);
 
     this->webServer.addPathHandler("POST", "/identify", handle_set_identify);
+
+#if defined(CONFIG_FIRMWARE_USE_AMP)
+    this->webServer.addPathHandler("POST", "/volume/up", handle_volume_up);
+
+    this->webServer.addPathHandler("POST", "/volume/down", handle_volume_down);
+#endif
 
     this->webServer.start(this->port);
 

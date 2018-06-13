@@ -116,6 +116,12 @@ R"=====(
                 <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
             </div>
             <div class="panel">
+                <button class="value" name="volume-up" id='volume-up' mozactionhint="volup" onclick="volume_up();">Volume up</button>
+            </div>
+            <div class="panel">
+                <button class="value" name="volume-down" id='volume-down' mozactionhint="voldown" onclick="volume_down();">Volume down</button>
+            </div>
+            <div class="panel">
                 <div class="value" name="error" id='error'></div>
             </div>
 
@@ -229,6 +235,54 @@ R"=====(
                     msg = "Failed to set identify";
                 }
 
+                console.log(msg);
+                document.getElementById('error').value = msg;
+            });
+        }
+
+        function volume_up() {
+            fetch('/volume/up', {
+                headers: {
+                    'user-agent': 'Firmware/0.0.1',
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                let msg = "";
+
+                if (json.success == true) {
+                    document.getElementById('error').value = "";
+                } else {
+                    msg = "Failed to increase volume";
+                }
+                console.log(msg);
+                document.getElementById('error').value = msg;
+            });
+        }
+
+        function volume_down() {
+            fetch('/volume/down', {
+                headers: {
+                    'user-agent': 'Firmware/0.0.1',
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                let msg = "";
+
+                if (json.success == true) {
+                    document.getElementById('error').value = "";
+                } else {
+                    msg = "Failed to reduce volume";
+                }
                 console.log(msg);
                 document.getElementById('error').value = msg;
             });
