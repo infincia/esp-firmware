@@ -64,6 +64,10 @@ R"=====(
             max-width: 80%;
         }
 
+        #homekit-panel {
+            display: none;
+        }
+
         .sidenav .stats {
             position: absolute;
             bottom: 3px;
@@ -104,7 +108,7 @@ R"=====(
             <div class="panel">
                 <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
             </div>
-            <div class="panel bordered">
+            <div class="panel bordered" id="homekit-panel">
                     <span class="title">Homekit</span>
                     <span class="value" type="text" id='pin'></span>
             </div>
@@ -154,8 +158,9 @@ R"=====(
                 document.getElementById('type').value = json.t;
                 if (json.hasOwnProperty('pin')) {
                     document.getElementById('pin').innerText = json.pin;
+                    document.getElementById('homekit-panel').style.display = "block";
                 } else {
-                    document.getElementById('pin').style.display = "none";
+                    document.getElementById('homekit-panel').style.display = "none";
                 }
             });
         }
