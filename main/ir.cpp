@@ -76,7 +76,7 @@ void IR::start() {
     ESP_ERROR_CHECK(rmt_config(&config));
     ESP_ERROR_CHECK(rmt_driver_install(config.channel, 1000, 0));
 
-    xTaskCreate(&task_wrapper, "ir_task", 1024, this, (tskIDLE_PRIORITY + 10), &this->ir_task_handle);
+    xTaskCreate(&task_wrapper, "ir_task", 2048, this, (tskIDLE_PRIORITY + 10), &this->ir_task_handle);
 }
 
 
