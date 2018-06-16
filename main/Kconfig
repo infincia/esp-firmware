@@ -29,6 +29,12 @@ config FIRMWARE_USE_HOMEKIT
     help
         Enable Homekit support
 
+config FIRMWARE_FORCE_HOMEKIT_PIN_DEFAULT
+    bool "Use default Homekit pin"
+    depends on FIRMWARE_USE_HOMEKIT
+    default true
+    help
+        Use default Homekit pin
 
 config FIRMWARE_USE_OTA
     bool "Enable OTA updater"
