@@ -71,8 +71,8 @@ void Updater::task() {
     /* Wait for wifi to be available */
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
 
-    // wait 5s before attempting first update check at boot
-    vTaskDelay(5000 / portTICK_RATE_MS);
+    // wait 10s before attempting first update check at boot
+    vTaskDelay(10000 / portTICK_RATE_MS);
 
 
     while (true) {
