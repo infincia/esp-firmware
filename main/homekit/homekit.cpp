@@ -90,10 +90,11 @@ void _humidity_notify(void* arg, void* ev_handle, bool enable)
     ESP_LOGI(TAG, "_humidity_notify");
     //xSemaphoreTake(ev_mutex, 0);
 
-    if (enable) 
+    if (enable) {
         _humidity_ev_handle = ev_handle;
-    else 
+    } else { 
         _humidity_ev_handle = NULL;
+    }
 
     //xSemaphoreGive(ev_mutex);
 }
