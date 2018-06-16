@@ -13,7 +13,16 @@ unsigned long IRAM_ATTR millis() {
     return xTaskGetTickCount() * portTICK_PERIOD_MS;
 }
 
+double round(double d) {
+    return floor(d + 0.5);
+}
 
+long map(int input, int input_start, int input_end, int output_start, int output_end) {
+    double slope = 1.0 * (output_end - output_start) / (input_end - input_start);
+    long output = output_start + round(slope * (input - input_start));
+
+    return output;
+}
 /*
  * @brief Volume control messages
  */
