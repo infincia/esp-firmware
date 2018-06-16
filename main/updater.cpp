@@ -80,7 +80,7 @@ void Updater::task() {
 
         this->update();
 
-        vTaskDelay(10000 / portTICK_RATE_MS);
+        vTaskDelay(60000 / portTICK_RATE_MS);
     }
 }
 
