@@ -203,8 +203,11 @@ void setup_amp(std::string& device_name, std::string& device_type, std::string& 
     ESP_LOGI(TAG, "starting amp services...");
 
     #if defined(CONFIG_FIRMWARE_USE_AMP)
+    ESP_LOGI(TAG, "+ Amp controller");
     amp.start();
+    ESP_LOGI(TAG, "+ IR control");
     ir.start();
+    ESP_LOGI(TAG, "+ OLED display");
     oled.start();
     #endif
 }
