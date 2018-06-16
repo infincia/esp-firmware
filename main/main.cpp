@@ -21,7 +21,7 @@
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_OTA)
-#include "update.hpp"
+#include "updater.hpp"
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_AWS)
@@ -72,7 +72,7 @@ Web web(CONFIG_FIRMWARE_WEB_PORT);
 static const char* UPDATE_MANIFEST_URL = CONFIG_FIRMWARE_OTA_MANIFEST_URL;
 #endif
 
-Update update(UPDATE_MANIFEST_URL);
+Updater updater(UPDATE_MANIFEST_URL);
 
 #endif
 
@@ -279,7 +279,7 @@ void setup_device(std::string& device_id) {
     led.start();
 
     #if defined(CONFIG_FIRMWARE_USE_OTA)
-    update.start(device_name);
+    updater.start(device_name);
     #endif
 
     #if defined(CONFIG_FIRMWARE_USE_CONSOLE)

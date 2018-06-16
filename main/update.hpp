@@ -9,23 +9,25 @@
 
 #define TEXT_BUFFSIZE 1024
 
+
 class Update {
 public:
-	Update(const char* update_manifest_url);
+	Update(const char* update_manifest_url, std::string& device_name);
 	virtual ~Update();
-	void task();
-    void start(std::string& device_name);
+	void check();
+
 private:
-	bool update(const char* url);
+    esp_ota_handle_t _update_handle;
+    const esp_partition_t *configured = esp_ota_get_boot_partition();
+    const esp_partition_t *running = esp_ota_get_running_partition();
+    const esp_partition_t *update_partition = esp_ota_get_next_update_partition(running);
 
-	TaskHandle_t update_task_handle;
+	std::string _device_name;
 
-	std::string device_name;
-
-    const char* update_url;
+    const char* _update_url;
     
     /* an packet receive buffer */
-    char text[TEXT_BUFFSIZE + 1] = {0};
+    char _text[TEXT_BUFFSIZE + 1] = {0};
 };
 
 #endif /* UPDATE_H_ */
