@@ -5,10 +5,11 @@
 
 PROJECT_NAME := firmware
 
-GIT_VERSION := $(shell git describe --always --tags --abbrev=0)
+FIRMWARE_VERSION := $(shell git describe --always --tags --abbrev=0)
+F := $(shell echo "\#include \"pch.hpp\"\n\nconst char *FIRMWARE_VERSION = \"$(GIT_VERSION)\";" > main/version.cpp)
 WIFI_SSID := $(FIRMWARE_WIFI_SSID)
 WIFI_PASSWORD := $(FIRMWARE_WIFI_PASSWORD)
 
-CPPFLAGS := -DVERSION=\"$(GIT_VERSION)\" -DFIRMWARE_WIFI_SSID=\"$(WIFI_SSID)\" -DFIRMWARE_WIFI_PASSWORD=\"$(WIFI_PASSWORD)\"
+CPPFLAGS := -DFIRMWARE_WIFI_SSID=\"$(WIFI_SSID)\" -DFIRMWARE_WIFI_PASSWORD=\"$(WIFI_PASSWORD)\"
 
 include $(IDF_PATH)/make/project.mk
