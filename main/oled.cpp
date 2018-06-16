@@ -100,7 +100,7 @@ void OLED::set_text(const char *text) {
 void OLED::task() {
     ESP_LOGI(TAG, "running");
     
-    vTaskDelay(15000 / portTICK_RATE_MS);
+    vTaskDelay(5000 / portTICK_RATE_MS);
 
     while (true) {
         IPCMessage message;
