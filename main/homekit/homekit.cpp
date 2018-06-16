@@ -29,9 +29,13 @@ static SemaphoreHandle_t ev_mutex;
 
 static void* _temperature_ev_handle = NULL;
 static void* _humidity_ev_handle =  NULL;
+static void* _volume_ev_handle =  NULL;
+static void* _mute_ev_handle =  NULL;
 
 static int h_temperature = 0;
 static int h_humidity = 0;
+static int h_volume = 0;
+static int h_mute = 0;
 
 void* identify_read(void* arg)
 {
@@ -95,6 +99,63 @@ void _humidity_notify(void* arg, void* ev_handle, bool enable)
 }
 
 
+
+static void* _mute_read(void* arg) {
+    ESP_LOGI(TAG, "_mute_read");
+    
+    return (void*)h_mute;
+}
+
+static void _mute_write(void* arg, void* value, int value_len) {
+    ESP_LOGI(TAG, "_mute_write");    
+    h_mute = (int)value;
+}
+
+void _mute_notify(void* arg, void* ev_handle, bool enable) {
+    ESP_LOGI(TAG, "_mute_notify");
+    //xSemaphoreTake(ev_mutex, 0);
+
+    if (enable) {
+        _mute_ev_handle = ev_handle;
+    } else { 
+        _mute_ev_handle = NULL;
+    }
+
+    //xSemaphoreGive(ev_mutex);
+}
+
+
+static void* _volume_read(void* arg) {
+    ESP_LOGI(TAG, "_volume_read");
+
+    return (void*)h_volume;
+}
+
+static void _volume_write(void* arg, void* value, int value_len) {
+    ESP_LOGI(TAG, "_volume_write");
+    int t = (int)value;
+
+    long v = map(t, 0, 100, 0, 63);
+
+    h_volume = static_cast<int>(v);
+
+    volume_set(h_volume);
+}
+
+void _volume_notify(void* arg, void* ev_handle, bool enable) {
+    ESP_LOGI(TAG, "_volume_notify");
+    //xSemaphoreTake(ev_mutex, 0);
+
+    if (enable) {
+        _volume_ev_handle = ev_handle;
+    } else { 
+        _volume_ev_handle = NULL;
+    }
+
+    //xSemaphoreGive(ev_mutex);
+}
+
+
 void hap_object_init(void* arg) {
     auto *instance = static_cast<Homekit *>(arg);
 
@@ -109,19 +170,26 @@ void hap_object_init(void* arg) {
     };
     hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_ACCESSORY_INFORMATION, cs, ARRAY_SIZE(cs));
 
+    if (instance->device_type == "sensor") {
+        struct hap_characteristic humidity_sensor[] = {
+            {HAP_CHARACTER_CURRENT_RELATIVE_HUMIDITY, (void*)h_humidity, NULL, _humidity_read, NULL, _humidity_notify},
+            {HAP_CHARACTER_NAME, (void*)"Humidity" , NULL, NULL, NULL, NULL},
+        };
+        hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_HUMIDITY_SENSOR, humidity_sensor, ARRAY_SIZE(humidity_sensor));
 
-
-    struct hap_characteristic humidity_sensor[] = {
-        {HAP_CHARACTER_CURRENT_RELATIVE_HUMIDITY, (void*)h_humidity, NULL, _humidity_read, NULL, _humidity_notify},
-        {HAP_CHARACTER_NAME, (void*)"Humidity" , NULL, NULL, NULL, NULL},
-    };
-    hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_HUMIDITY_SENSOR, humidity_sensor, ARRAY_SIZE(humidity_sensor));
-
-    struct hap_characteristic temperature_sensor[] = {
-        {HAP_CHARACTER_CURRENT_TEMPERATURE, (void*)h_temperature, NULL, _temperature_read, NULL, _temperature_notify},
-        {HAP_CHARACTER_NAME, (void*)"Temperature" , NULL, NULL, NULL, NULL},
-    };
-    hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_TEMPERATURE_SENSOR, temperature_sensor, ARRAY_SIZE(temperature_sensor));
+        struct hap_characteristic temperature_sensor[] = {
+            {HAP_CHARACTER_CURRENT_TEMPERATURE, (void*)h_temperature, NULL, _temperature_read, NULL, _temperature_notify},
+            {HAP_CHARACTER_NAME, (void*)"Temperature" , NULL, NULL, NULL, NULL},
+        };
+        hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_TEMPERATURE_SENSOR, temperature_sensor, ARRAY_SIZE(temperature_sensor));
+    } else if (instance->device_type == "amp") {
+        struct hap_characteristic speaker[] = {
+            {HAP_CHARACTER_VOLUME, (void*)h_volume, NULL, _volume_read, _volume_write, _volume_notify},
+            {HAP_CHARACTER_MUTE, (void*)h_mute, NULL, _mute_read, _mute_write, _mute_notify},
+            {HAP_CHARACTER_NAME, (void*)"Volume" , NULL, NULL, NULL, NULL},
+        };
+        hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_SPEAKER, speaker, ARRAY_SIZE(speaker));
+    }
 }
 
 /**
@@ -201,6 +269,22 @@ void Homekit::task() {
                 }
                 //xSemaphoreGive(ev_mutex);
 
+            } else if (message.messageType == ControlMessageTypeVolumeSet) {
+                ESP_LOGD(TAG, "volume update received: %d", message.volumeLevel);
+
+                //xSemaphoreTake(ev_mutex, 0);
+
+                long v = map(message.volumeLevel, 0, 63, 0, 100);
+
+                this->volume  = static_cast<int>(v);
+
+                h_volume = this->volume;
+
+                if (_volume_ev_handle) {
+                    hap_event_response(a, _volume_ev_handle, (void*)h_volume);
+                }
+
+                //xSemaphoreGive(ev_mutex);
             }
         }
     }
