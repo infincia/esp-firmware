@@ -54,8 +54,6 @@ void Updater::update() {
     try {
         Update i_update(update_url, device_name);
         i_update.check();
-        ESP_LOGI(TAG, "updated, restarting");
-        esp_restart();
     } catch (std::exception &ex) {
         ESP_LOGE(TAG, "update failed: %s", ex.what());
     }
