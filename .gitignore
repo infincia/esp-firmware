@@ -9,3 +9,4 @@ build
 sdkconfig.old
 .vscode/settings.json
 cmake-build-debug
+main/version.cpp
