@@ -17,6 +17,7 @@
 #include <sys/time.h>
 #include <map>
 #include <mutex>
+#include <math.h>
 
 //#include <sstream>
 //#include <iostream>
