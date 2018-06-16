@@ -210,6 +210,11 @@ void setup_amp(std::string& device_name, std::string& device_type, std::string& 
     ESP_LOGI(TAG, "+ OLED display");
     oled.start();
     #endif
+
+    #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
+    ESP_LOGI(TAG, "+ Homekit");
+    homekit.start(device_name, device_type, device_id);
+    #endif
 }
 
 
