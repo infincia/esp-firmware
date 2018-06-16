@@ -89,7 +89,7 @@ bool Update::update(const char* url) {
 
 
     char user_agent[32];
-    snprintf(user_agent, sizeof(user_agent), "%s/%s", this->device_name.c_str(), VERSION);
+    snprintf(user_agent, sizeof(user_agent), "%s/%s", this->device_name.c_str(), FIRMWARE_VERSION);
 
 
 
@@ -145,7 +145,7 @@ bool Update::update(const char* url) {
 
 
     try {
-        Semver current_version(VERSION);
+        Semver current_version(FIRMWARE_VERSION);
         Semver available_version(available_version_s);
 
         ESP_LOGI(TAG, "current version: %s", current_version.string().c_str());

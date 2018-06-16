@@ -167,7 +167,7 @@ void hap_object_init(void* arg) {
         {HAP_CHARACTER_MODEL, (void*)instance->device_type.c_str(), instance, NULL, NULL, NULL},
         {HAP_CHARACTER_NAME, (void*)instance->device_name.c_str(), instance, NULL, NULL, NULL},
         {HAP_CHARACTER_SERIAL_NUMBER, (void*)instance->device_id.c_str(), instance, NULL, NULL, NULL},
-        {HAP_CHARACTER_FIRMWARE_REVISION, (void*)VERSION, instance, NULL, NULL, NULL},
+        {HAP_CHARACTER_FIRMWARE_REVISION, (void*)FIRMWARE_VERSION, instance, NULL, NULL, NULL},
     };
     hap_service_and_characteristics_add(a, accessory_object, HAP_SERVICE_ACCESSORY_INFORMATION, cs, ARRAY_SIZE(cs));
 

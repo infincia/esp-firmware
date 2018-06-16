@@ -100,6 +100,7 @@
  *
  */
 
+#include "version.hpp"
 #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 #include "cmd_decl.hpp"
 #endif
