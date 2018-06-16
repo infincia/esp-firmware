@@ -26,6 +26,7 @@ private:
 	float temperature = 0.0;
 	float humidity = 0.0;
     uint32_t heap = 0;
+	uint8_t volume = 0;
 
     std::string pin;
 
