@@ -310,7 +310,7 @@ static void device_setup_task(void *param) {
     uint8_t mac[6];
     esp_wifi_get_mac(ESP_IF_WIFI_STA, mac);
     char ser[32] = {0,};
-    sprintf(ser, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    sprintf(ser, "%02X-%02X-%02X-%02X-%02X-%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
     std::string device_id(ser);
 
