@@ -66,6 +66,9 @@ Update::~Update() {
         const char* msg = error_string(err);
         ESP_LOGE(TAG, "boot select error: %s", msg);
     }   
+
+    ESP_LOGI(TAG, "update successful, restarting");
+    esp_restart();
 };
 
 /**
