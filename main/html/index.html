@@ -68,6 +68,14 @@ R"=====(
             display: none;
         }
 
+        #volup-panel {
+            display: none;
+        }
+
+        #voldown-panel {
+            display: none;
+        }
+
         .sidenav .stats {
             position: absolute;
             bottom: 3px;
@@ -115,10 +123,10 @@ R"=====(
             <div class="panel">
                 <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
             </div>
-            <div class="panel">
+            <div class="panel" id="volup-panel">
                 <button class="value" name="volume-up" id='volume-up' mozactionhint="volup" onclick="volume_up();">Volume up</button>
             </div>
-            <div class="panel">
+            <div class="panel" id="voldown-panel">
                 <button class="value" name="volume-down" id='volume-down' mozactionhint="voldown" onclick="volume_down();">Volume down</button>
             </div>
             <div class="panel">
@@ -167,6 +175,11 @@ R"=====(
                     document.getElementById('homekit-panel').style.display = "block";
                 } else {
                     document.getElementById('homekit-panel').style.display = "none";
+                }
+
+                if (json.t === "amp") {
+                    document.getElementById('volup-panel').style.display = "block";
+                    document.getElementById('voldown-panel').style.display = "block";
                 }
             });
         }
