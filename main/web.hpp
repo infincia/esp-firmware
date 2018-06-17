@@ -20,6 +20,9 @@ public:
 	std::string device_name;
 	std::string device_type;
     
+    float temperature = 0.0;
+	float humidity = 0.0;
+
 private:
 	TaskHandle_t web_task_handle;
 
