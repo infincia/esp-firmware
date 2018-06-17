@@ -34,6 +34,16 @@ R"=====(
             margin: 12px 12px;
         }
 
+        .sidenav .button-panel {
+            position: relative;
+            height: 30px;
+            margin: 0 12px;
+        }
+
+        .sidenav .button-panel button {
+            display: inline-block;
+        }
+        
         .sidenav .panel.bordered {
             border: 1px solid #3A4553;
             border-radius: 8px;
@@ -111,15 +121,14 @@ R"=====(
                 </select>
             </div>
 
-            <div class="panel">
+            <div class="button-panel">
                 <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
+                <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
+
             </div>
             <div class="panel bordered" id="homekit-panel">
                     <span class="title">Homekit</span>
                     <span class="value" type="text" id='pin'></span>
-            </div>
-            <div class="panel">
-                <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
             </div>
             <div class="panel" id="volup-panel">
                 <button class="value" name="volume-up" id='volume-up' mozactionhint="volup" onclick="volume_up();">Volume up</button>
