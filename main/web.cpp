@@ -379,8 +379,8 @@ void Web::task() {
 
 #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
             if (message.messageType == ControlMessageTypeVolumeEvent) {
-                auto current_volume = message.volumeLevel;
-                this->send_volume(current_volume);
+                this->volume = message.volumeLevel;
+                this->send_volume(this->volume);
             } else if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
                 this->humidity = message.humidity;
