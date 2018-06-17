@@ -377,16 +377,18 @@ void Web::task() {
         if (xQueueReceive(webQueue, &(message), (TickType_t)10)) {
             ESP_LOGV(TAG, "message received");
 
-#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
             if (message.messageType == ControlMessageTypeVolumeEvent) {
                 this->volume = message.volumeLevel;
+                #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
                 this->send_volume(this->volume);
+                #endif
             } else if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
                 this->humidity = message.humidity;
+                #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
                 this->send_temperature(this->temperature, this->humidity);
+                #endif
             }
-#endif
         }
 
         vTaskDelay(10 / portTICK_RATE_MS);
