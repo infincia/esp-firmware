@@ -23,6 +23,8 @@ public:
     float temperature = 0.0;
 	float humidity = 0.0;
 
+    uint8_t volume = 0;
+
 private:
 	TaskHandle_t web_task_handle;
 
