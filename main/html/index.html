@@ -77,12 +77,46 @@ R"=====(
             display: none;
         }
 
-        #volup-panel {
+        #volume-panel {
             display: none;
+            flex-wrap: nowrap;
+            justify-content: center;
+            flex-direction: row;
         }
 
-        #voldown-panel {
-            display: none;
+        #volume-panel  .volume-bar {
+            position: absolute;
+            display: flex;
+            height: 40px;
+            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .volume-bar .volume {
+            font-size: 1.6em;
+        }
+
+        .volume-bar .volume-up,
+        .volume-bar .volume,
+        .volume-bar .volume-down {
+            flex-grow: 1;
+            text-align: center;
+            line-height: 1.7em;
+            font-weight: bold;
+        }
+
+        .volume-bar .volume-up,
+        .volume-bar .volume-down {
+            font-size: 1.6em;
+            cursor: pointer;
+        }
+        
+        .volume-bar .volume-up:hover,
+        .volume-bar .volume-down:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transition: all;
         }
 
         .sidenav .stats {
@@ -130,11 +164,13 @@ R"=====(
                     <span class="title">Homekit</span>
                     <span class="value" type="text" id='pin'></span>
             </div>
-            <div class="panel" id="volup-panel">
-                <button class="value" name="volume-up" id='volume-up' mozactionhint="volup" onclick="volume_up();">Volume up</button>
-            </div>
-            <div class="panel" id="voldown-panel">
-                <button class="value" name="volume-down" id='volume-down' mozactionhint="voldown" onclick="volume_down();">Volume down</button>
+            <div class="panel bordered" id="volume-panel">
+                <span class="title">Volume</span>
+                <div class="volume-bar" id="volume-bar">
+                    <div class="volume-down" name="volume-down" onclick="volume_down();">-</div>
+                    <div class="volume" type="text" id='volume'></div>
+                    <div class="volume-up" name="volume-up" onclick="volume_up();">+</div>
+                </div>
             </div>
             <div class="panel">
                 <div class="value" name="error" id='error'></div>
@@ -165,6 +201,7 @@ R"=====(
                 document.getElementById('free').innerText = `Free: ${(json.f / 1024.0).toFixed(2)}K`;
                 document.getElementById('min').innerText = `Min: ${(json.m / 1024.0).toFixed(2)}K`;
                 document.getElementById('version').innerText = `Version: ${json.v}`;
+                document.getElementById('volume').innerText = `${json.vol}`;
             });
         }
 
@@ -185,8 +222,7 @@ R"=====(
                 }
 
                 if (json.t === "amp") {
-                    document.getElementById('volup-panel').style.display = "block";
-                    document.getElementById('voldown-panel').style.display = "block";
+                    document.getElementById('volume-panel').style.display = "block";
                 }
             });
         }
