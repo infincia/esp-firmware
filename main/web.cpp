@@ -87,6 +87,8 @@ static void handle_index(HttpRequest *request, HttpResponse *response, void* ctx
 
 
 static void handle_get_status(HttpRequest *request, HttpResponse *response, void* ctx) {
+    Web *instance = static_cast<Web *>(ctx);
+
     response->addHeader("Content-Type", "application/json");
     response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
     size_t free_heap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
@@ -97,6 +99,7 @@ static void handle_get_status(HttpRequest *request, HttpResponse *response, void
     json.setInt("f", free_heap);
     json.setInt("m", min_free_heap);
     json.setString("v", FIRMWARE_VERSION);
+    json.setInt("vol", instance->volume);
 
     response->sendData(json.toStringUnformatted());
 
