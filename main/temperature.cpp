@@ -77,7 +77,7 @@ bool Temperature::update() {
         success = true;
         this->current_temperature = (si7021_data.temperature * 1.8f) + 32.0f;
         this->current_humidity = si7021_data.humidity;
-        ESP_LOGI(TAG, "si7021 sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
+        ESP_LOGD(TAG, "si7021 sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
     }
 
 
