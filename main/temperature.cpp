@@ -84,45 +84,45 @@ bool Temperature::update() {
 
 
     if (success) {
-#if defined(CONFIG_FIRMWARE_USE_WEB)
-    {
-        IPCMessage message;
-        message.messageType = EventTemperatureSensorValue;
-        message.temperature = this->current_temperature;
-        message.humidity = this->current_humidity;
+    #if defined(CONFIG_FIRMWARE_USE_WEB)
+        {
+            IPCMessage message;
+            message.messageType = EventTemperatureSensorValue;
+            message.temperature = this->current_temperature;
+            message.humidity = this->current_humidity;
 
-        ESP_LOGD(TAG, "sending temperature reading to web task");
+            ESP_LOGD(TAG, "sending temperature reading to web task");
 
-        if (!xQueueOverwrite(webQueue, (void *)&message)) {
-            ESP_LOGV(TAG, "Sending web temperature event failed");
+            if (!xQueueOverwrite(webQueue, (void *)&message)) {
+                ESP_LOGV(TAG, "Sending web temperature event failed");
+            }
         }
-    }
-#endif
+    #endif
 
-#if defined(CONFIG_FIRMWARE_USE_AWS) || defined(CONFIG_FIRMWARE_USE_HOMEKIT)
-    {
-        IPCMessage message;
-        message.messageType = EventTemperatureSensorValue;
-        message.temperature = this->current_temperature;
-        message.humidity = this->current_humidity;
+    #if defined(CONFIG_FIRMWARE_USE_AWS) || defined(CONFIG_FIRMWARE_USE_HOMEKIT)
+        {
+            IPCMessage message;
+            message.messageType = EventTemperatureSensorValue;
+            message.temperature = this->current_temperature;
+            message.humidity = this->current_humidity;
 
-#if defined(CONFIG_FIRMWARE_USE_AWS)
-        ESP_LOGD(TAG, "sending temperature reading to aws task");
+    #if defined(CONFIG_FIRMWARE_USE_AWS)
+            ESP_LOGD(TAG, "sending temperature reading to aws task");
 
-        if (!xQueueOverwrite(awsQueue, (void *)&message)) {
-            ESP_LOGV(TAG, "Sending aws sensor event failed");
+            if (!xQueueOverwrite(awsQueue, (void *)&message)) {
+                ESP_LOGV(TAG, "Sending aws sensor event failed");
+            }
+    #endif
+
+    #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
+            ESP_LOGD(TAG, "sending temperature reading to homekit task");
+
+            if (!xQueueOverwrite(homekitQueue, (void *)&message)) {
+                ESP_LOGV(TAG, "Sending homekit sensor event failed");
+            }
+    #endif
         }
-#endif
-
-#if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
-        ESP_LOGD(TAG, "sending temperature reading to homekit task");
-
-        if (!xQueueOverwrite(homekitQueue, (void *)&message)) {
-            ESP_LOGV(TAG, "Sending homekit sensor event failed");
-        }
-#endif
-    }
-#endif
+    #endif
 
     }
 
