@@ -65,18 +65,25 @@ void Temperature::start() {
  */
 
 bool Temperature::update() {
-    struct si7021_reading sensor_data{};
+    struct si7021_reading si7021_data{};
 
-    esp_err_t ret = readSensors(this->port, &sensor_data);
+    bool success = false;
+
+    esp_err_t ret;
+
+    ret = readSensors(this->port, &si7021_data);
 
     if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "sensor reading failed");
-        return false;
+        ESP_LOGW(TAG, "si7021 sensor reading failed");
+    } else {
+        success = true;
+        this->current_temperature = (si7021_data.temperature * 1.8f) + 32.0f;
+        this->current_humidity = si7021_data.humidity;
+        ESP_LOGI(TAG, "si7021 sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
     }
 
-    this->current_temperature = (sensor_data.temperature * 1.8f) + 32.0f;
-    this->current_humidity = sensor_data.humidity;
 
+    if (success) {
 #if defined(CONFIG_FIRMWARE_USE_WEB)
     {
         IPCMessage message;
@@ -116,7 +123,10 @@ bool Temperature::update() {
 #endif
     }
 #endif
-    return true;
+
+    }
+
+    return success;
 }
 
 
