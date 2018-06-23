@@ -136,4 +136,25 @@ config FIRMWARE_IDENTIFY_GPIO
     help
         GPIO for identify LED
 
+
+config FIRMWARE_USE_UDP_LOGGING
+    bool "Enable UDP logging"
+    default true
+    help
+        Enables UDP logging
+
+config FIRMWARE_UDP_LOGGING_IP
+    string "Remote IP address of UDP logging server"
+    depends on FIRMWARE_USE_UDP_LOGGING
+    default "192.168.20.10"
+    help
+        Remote IP address of UDP logging server
+
+config FIRMWARE_UDP_LOGGING_PORT
+    int "Remote port of UDP logging server"
+    depends on FIRMWARE_USE_UDP_LOGGING
+    default 8444
+    help
+        Remote port of UDP logging server
+
 endmenu
