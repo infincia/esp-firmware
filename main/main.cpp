@@ -45,6 +45,9 @@ TaskHandle_t setup_task_handle;
 
 LED led;
 
+#if defined(CONFIG_FIRMWARE_USE_UDP_LOGGING)
+#include "udp_logging.h"
+#endif
 
 #if defined(CONFIG_FIRMWARE_USE_CONSOLE)
 Console console;
@@ -97,6 +100,9 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
         case SYSTEM_EVENT_STA_GOT_IP:
             ESP_LOGI(_TAG, "got IP");
             xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
+            #if defined(CONFIG_FIRMWARE_USE_UDP_LOGGING)
+            udp_logging_init(CONFIG_FIRMWARE_UDP_LOGGING_IP, CONFIG_FIRMWARE_UDP_LOGGING_PORT);
+            #endif
             break;
         case SYSTEM_EVENT_STA_LOST_IP:
             ESP_LOGI(_TAG, "lost IP");
