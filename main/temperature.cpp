@@ -73,9 +73,7 @@ bool Temperature::update() {
 
     ret = readSensors(this->port, &si7021_data);
 
-    if (ret != ESP_OK) {
-        ESP_LOGW(TAG, "si7021 sensor reading failed");
-    } else {
+    if (ret == ESP_OK) {
         success = true;
         this->current_temperature = (si7021_data.temperature * 1.8f) + 32.0f;
         this->current_humidity = si7021_data.humidity;
