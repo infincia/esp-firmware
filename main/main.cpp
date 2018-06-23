@@ -381,7 +381,7 @@ void app_main() {
 
     setup_wifi();
 
-    xTaskCreate(&stats_task, "stats_task", 2048, NULL, (tskIDLE_PRIORITY + 10), &stats_task_handle);
+    xTaskCreate(&stats_task, "stats_task", 3072, NULL, (tskIDLE_PRIORITY + 10), &stats_task_handle);
 
     xTaskCreate(&device_setup_task, "device_setup_task", 8192, NULL, (tskIDLE_PRIORITY + 10), &setup_task_handle);
 }
