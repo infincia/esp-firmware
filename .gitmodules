@@ -28,3 +28,6 @@
 [submodule "components/udp_logging"]
 	path = components/udp_logging
 	url = https://github.com/infincia/embedded-esp32-component-udp_logging.git
+[submodule "components/dht_espidf"]
+	path = components/dht_espidf
+	url = https://github.com/infincia/dht_espidf.git
