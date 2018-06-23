@@ -8,6 +8,7 @@
 
 extern "C" {
 #include "si7021.h"
+#include "dht_espidf.h"
 }
 
 static const char *TAG = "[Temperature]";
@@ -24,6 +25,7 @@ static const char *TAG = "[Temperature]";
 #define SI7021_I2C_MASTER_RX_BUF_DISABLE 0
 #define SI7021_I2C_MASTER_FREQ_HZ 100000
 
+#define DHT_IO 27
 
 /**
  *
@@ -67,9 +69,21 @@ void Temperature::start() {
 bool Temperature::update() {
     struct si7021_reading si7021_data{};
 
+    struct dht_reading dht_data{};
+    
     bool success = false;
 
     esp_err_t ret;
+    dht_result_t res;
+
+    res = read_dht_sensor_data((gpio_num_t)DHT_IO, DHT11, &dht_data);
+
+    if (res == DHT_OK) {
+        success = true;
+        this->current_temperature = (dht_data.temperature * 1.8f) + 32.0f;
+        this->current_humidity = dht_data.humidity;
+        ESP_LOGD(TAG, "DHT sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
+    }
 
     ret = readSensors(this->port, &si7021_data);
 
