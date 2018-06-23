@@ -108,20 +108,58 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
             ESP_LOGI(_TAG, "lost IP");
             // xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
             break;
-        case SYSTEM_EVENT_STA_START:
+        case SYSTEM_EVENT_STA_START: {
             ESP_LOGI(_TAG, "STA start");
-            ESP_ERROR_CHECK(esp_wifi_connect());
+            esp_err_t err = esp_wifi_connect();
+            switch (err) {
+                case ESP_OK:
+                break;
+                case ESP_ERR_WIFI_NOT_INIT:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_NOT_INIT");
+                    break;
+                case ESP_ERR_WIFI_NOT_STARTED:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_NOT_STARTED");
+                    break;
+                case ESP_ERR_WIFI_CONN:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_CONN");
+                    break;
+                case ESP_ERR_WIFI_SSID:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_SSID");
+                    break;
+                default:
+                break;
+            }
             break;
+        }
         case SYSTEM_EVENT_STA_CONNECTED:
             ESP_LOGI(_TAG, "STA connected");
             break;
-        case SYSTEM_EVENT_STA_DISCONNECTED:
+        case SYSTEM_EVENT_STA_DISCONNECTED: {
             ESP_LOGI(_TAG, "STA disconnected");
             udp_logging_free();
             xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
             // This is a workaround as ESP32 WiFi libs don't currently auto-reassociate.
-            ESP_ERROR_CHECK(esp_wifi_connect());
+            esp_err_t err = esp_wifi_connect();
+            switch (err) {
+                case ESP_OK:
+                break;
+                case ESP_ERR_WIFI_NOT_INIT:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_NOT_INIT");
+                    break;
+                case ESP_ERR_WIFI_NOT_STARTED:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_NOT_STARTED");
+                    break;
+                case ESP_ERR_WIFI_CONN:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_CONN");
+                    break;
+                case ESP_ERR_WIFI_SSID:
+                    ESP_LOGI(_TAG, "ESP_ERR_WIFI_SSID");
+                    break;
+                default:
+                    break;
+            }
             break;
+        }
         default:
             ESP_LOGI(_TAG, "event occurred, unknown type");
             break;
