@@ -82,6 +82,8 @@ void AWS::ShadowUpdateStatusCallback(const char *pThingName,
         ESP_LOGE(TAG, "update timed out");
     } else if(SHADOW_ACK_REJECTED == status) {
         ESP_LOGE(TAG, "update rejected");
+    } else if (SHADOW_ACK_ACCEPTED == status) {
+        ESP_LOGI(TAG, "update accepted");
     }
 }
 
@@ -185,6 +187,8 @@ void AWS::task() {
 
             connected = true;
         }
+        
+        ESP_LOGI(TAG, "AWS connected");
 
         rc = aws_iot_shadow_yield(&mqttClient, 200);
 
