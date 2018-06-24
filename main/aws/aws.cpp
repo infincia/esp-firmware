@@ -186,9 +186,9 @@ void AWS::task() {
             }
 
             connected = true;
+            ESP_LOGI(TAG, "AWS connected");
         }
         
-        ESP_LOGI(TAG, "AWS connected");
 
         rc = aws_iot_shadow_yield(&mqttClient, 200);
 
