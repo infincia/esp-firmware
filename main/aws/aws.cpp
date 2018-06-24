@@ -50,7 +50,7 @@ void AWS::start(std::string& device_name) {
 
     this->device_name = device_name;
     
-    xTaskCreate(&task_wrapper, "aws_task", 8192, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
+    xTaskCreate(&task_wrapper, "aws_task", 16384, this, (tskIDLE_PRIORITY + 10), &this->aws_task_handle);
 }
 
 
