@@ -158,6 +158,7 @@ R"=====(
             <div class="button-panel">
                 <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
                 <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
+                <button class="value" name="restart" id='restart' mozactionhint="restart" onclick="restart();">Restart</button>
 
             </div>
             <div class="panel bordered" id="homekit-panel">
@@ -338,6 +339,30 @@ R"=====(
                     document.getElementById('error').value = "";
                 } else {
                     msg = "Failed to reduce volume";
+                }
+                console.log(msg);
+                document.getElementById('error').value = msg;
+            });
+        }
+
+        function restart() {
+            fetch('/restart', {
+                headers: {
+                    'user-agent': 'Firmware/0.0.1',
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                let msg = "";
+
+                if (json.success == true) {
+                    document.getElementById('error').value = "";
+                } else {
+                    msg = "Failed to restart";
                 }
                 console.log(msg);
                 document.getElementById('error').value = msg;

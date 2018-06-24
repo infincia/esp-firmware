@@ -251,6 +251,22 @@ static void handle_volume_down(HttpRequest *request, HttpResponse *response, voi
 
 #endif
 
+static void handle_restart(HttpRequest *request, HttpResponse *response, void* ctx) {
+    response->addHeader("Content-Type", "application/json");
+    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+
+    auto json_response = JSON::createObject();
+
+    json_response.setBoolean("success", true); 
+
+    response->sendData(json_response.toStringUnformatted());
+    response->close();
+
+    JSON::deleteObject(json_response);
+
+    vTaskDelay(2000 / portTICK_RATE_MS);
+    esp_restart();
+}
 
 #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 static void handle_websocket(HttpRequest *request, HttpResponse *response, void* ctx) {
@@ -362,6 +378,8 @@ void Web::task() {
     this->webServer.addPathHandler("GET", "/provision", handle_get_provision);
 
     this->webServer.addPathHandler("POST", "/identify", handle_set_identify);
+
+    this->webServer.addPathHandler("POST", "/restart", handle_restart);
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
     this->webServer.addPathHandler("POST", "/volume/up", handle_volume_up);
