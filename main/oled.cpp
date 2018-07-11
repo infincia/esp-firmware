@@ -12,8 +12,6 @@ extern "C" {
 #include "ssd1306_font.h"
 }
 
-#include "font.h"
-
 static const char *TAG = "[OLED]";
 
 
