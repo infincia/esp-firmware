@@ -211,6 +211,33 @@ static void handle_set_identify(HttpRequest *request, HttpResponse *response, vo
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
 
+static void handle_volume_set(HttpRequest *request, HttpResponse *response, void* ctx) {
+    response->addHeader("Content-Type", "application/json");
+    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+
+    std::string body(request->getBody());
+
+    auto m = JSON::parseObject(body);
+
+    auto vol = m.getInt("vol");
+
+    JSON::deleteObject(m);
+
+    auto json_response = JSON::createObject();
+
+    if (!volume_set(vol)) {
+        ESP_LOGE(TAG, "Setting volume failed");
+        json_response.setBoolean("success", false); 
+    } else {
+        json_response.setBoolean("success", true); 
+    }
+
+    response->sendData(json_response.toStringUnformatted());
+    response->close();
+
+    JSON::deleteObject(json_response);
+}
+
 static void handle_volume_up(HttpRequest *request, HttpResponse *response, void* ctx) {
     response->addHeader("Content-Type", "application/json");
     response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
@@ -382,6 +409,8 @@ void Web::task() {
     this->webServer.addPathHandler("POST", "/restart", handle_restart);
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
+    this->webServer.addPathHandler("POST", "/volume/set", handle_volume_set);
+
     this->webServer.addPathHandler("POST", "/volume/up", handle_volume_up);
 
     this->webServer.addPathHandler("POST", "/volume/down", handle_volume_down);
