@@ -218,7 +218,7 @@ static void handle_volume_up(HttpRequest *request, HttpResponse *response, void*
     auto json_response = JSON::createObject();
 
     if (!volume_up()) {
-        ESP_LOGE(TAG, "Setting volume up");
+        ESP_LOGE(TAG, "Setting volume up failed");
         json_response.setBoolean("success", false); 
     } else {
         json_response.setBoolean("success", true); 
