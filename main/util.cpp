@@ -56,7 +56,7 @@ bool volume_set(uint8_t level) {
     volume_message.messageType = ControlMessageTypeVolumeSet;
     volume_message.volumeLevel = level;
 
-    if (xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
+    if (!xQueueOverwrite(volumeChangeQueue, (void *)&volume_message)) {
         ESP_LOGE(TAG, "failed to send volume set on volumeChangeQueue");
         return false;
     }
@@ -69,7 +69,7 @@ bool signal_identify_on_device(bool state) {
     message.messageType = EventIdentifyLED;
     message.led_state = state;
 
-    if (xQueueOverwrite(ledQueue, (void *)&message)) {
+    if (!xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send identify message on ledQueue");
         return false;
     }
@@ -81,7 +81,7 @@ bool signal_error_on_device(bool state) {
     message.messageType = EventErrorLED;
     message.led_state = state;
 
-    if (xQueueOverwrite(ledQueue, (void *)&message)) {
+    if (!xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send error message on ledQueue");
         return false;
     }
@@ -93,7 +93,7 @@ bool signal_ready_on_device(bool state) {
     message.messageType = EventReadyLED;
     message.led_state = state;
 
-    if (xQueueOverwrite(ledQueue, (void *)&message)) {
+    if (!xQueueOverwrite(ledQueue, (void *)&message)) {
         ESP_LOGE(TAG, "failed to send ready message on ledQueue");
         return false;
     }
