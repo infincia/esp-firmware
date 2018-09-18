@@ -161,7 +161,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
             break;
         }
         default:
-            ESP_LOGI(_TAG, "event occurred, unknown type");
+            ESP_LOGI(_TAG, "event occurred, unknown type %d", event->event_id);
             break;
     }
     return ESP_OK;
