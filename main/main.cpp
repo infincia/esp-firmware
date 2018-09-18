@@ -289,6 +289,9 @@ void setup_wifi() {
     strcpy((char *)sta_config.password, password.c_str());
     #endif
 
+    sta_config.bssid_set = false;
+    sta_config.channel = 0;
+    sta_config.scan_method = WIFI_ALL_CHANNEL_SCAN;
     wifi_config.sta = sta_config;
     
     wifi_country_t country;
