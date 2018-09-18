@@ -107,7 +107,7 @@ void OLED::task() {
                 set_text(message.text);
             }
         }
-        vTaskDelay(10 / portTICK_RATE_MS);
+        vTaskDelay(30 / portTICK_RATE_MS);
     }
 }
 
