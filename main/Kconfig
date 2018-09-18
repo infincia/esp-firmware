@@ -24,7 +24,7 @@ config FIRMWARE_USE_AWS
 
 config FIRMWARE_USE_HOMEKIT
     bool "Enable Homekit"
-    depends on FIRMWARE_USE_TEMPERATURE
+    depends on FIRMWARE_USE_TEMPERATURE_SI7021
     default true
     help
         Enable Homekit support
@@ -76,13 +76,25 @@ config FIRMWARE_USE_WEB_WEBSOCKET
     help
         Enable Websockets in web interface
 
-
-config FIRMWARE_USE_TEMPERATURE
-    bool "Enable Temperature Sensor"
-    default true
+choice
+    prompt "Enable Temperature Sensor"
+    default FIRMWARE_USE_TEMPERATURE_OFF
+    
+    config FIRMWARE_USE_TEMPERATURE_OFF
+        bool "None"
     help
-        Enable temperature sensor support via si7021
+        Disable temperature sensor support
 
+    config FIRMWARE_USE_TEMPERATURE_DHT11
+        bool "dht11"
+    help
+        Use DHT11 sensor
+
+    config FIRMWARE_USE_TEMPERATURE_SI7021
+        bool "si7021"
+    help
+        Use si7021 sensor
+endchoice
 
 config FIRMWARE_USE_CONSOLE
     bool "Enable console interface"
