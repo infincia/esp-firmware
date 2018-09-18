@@ -1,14 +1,17 @@
 #include "pch.hpp"
 
 
-#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 
 #include "temperature.hpp"
 
 
 extern "C" {
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
 #include "si7021.h"
+#elif  defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 #include "dht_espidf.h"
+#endif
 }
 
 static const char *TAG = "[Temperature]";
@@ -18,14 +21,16 @@ static const char *TAG = "[Temperature]";
  *
  * @brief I2C port configuration
  */
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
 #define SI7021_I2C_MASTER_SCL_IO 22 /*!< gpio number for I2C master clock */
 #define SI7021_I2C_MASTER_SDA_IO 21 /*!< gpio number for I2C master data  */
 #define SI7021_I2C_MASTER_NUM I2C_NUM_0 /*!< I2C port number for master dev */
 #define SI7021_I2C_MASTER_TX_BUF_DISABLE 0
 #define SI7021_I2C_MASTER_RX_BUF_DISABLE 0
 #define SI7021_I2C_MASTER_FREQ_HZ 100000
-
+#elif defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 #define DHT_IO 27
+#endif
 
 /**
  *
@@ -45,6 +50,7 @@ Temperature::~Temperature() = default;
 
 
 void Temperature::start() {
+    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
     this->port = SI7021_I2C_MASTER_NUM;
     i2c_config_t conf;
     conf.mode = I2C_MODE_MASTER;
@@ -56,7 +62,7 @@ void Temperature::start() {
     i2c_param_config(this->port, &conf);
     i2c_driver_install(this->port, conf.mode, SI7021_I2C_MASTER_RX_BUF_DISABLE,
         SI7021_I2C_MASTER_TX_BUF_DISABLE, 0);
-
+    #endif
     xTaskCreate(&task_wrapper, "temperature_task", 3072, this, (tskIDLE_PRIORITY + 10),
         &this->temperature_task_handle);
 }
@@ -67,23 +73,12 @@ void Temperature::start() {
  */
 
 bool Temperature::update() {
-    struct si7021_reading si7021_data{};
-
-    struct dht_reading dht_data{};
-    
     bool success = false;
 
     esp_err_t ret;
-    dht_result_t res;
 
-    res = read_dht_sensor_data((gpio_num_t)DHT_IO, DHT11, &dht_data);
-
-    if (res == DHT_OK) {
-        success = true;
-        this->current_temperature = (dht_data.temperature * 1.8f) + 32.0f;
-        this->current_humidity = dht_data.humidity;
-        ESP_LOGD(TAG, "DHT sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
-    }
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
+    struct si7021_reading si7021_data{};
 
     ret = readSensors(this->port, &si7021_data);
 
@@ -92,8 +87,20 @@ bool Temperature::update() {
         this->current_temperature = (si7021_data.temperature * 1.8f) + 32.0f;
         this->current_humidity = si7021_data.humidity;
         ESP_LOGD(TAG, "si7021 sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
-    }
+    }    
 
+#elif defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
+    dht_result_t res;
+    struct dht_reading dht_data{};
+    res = read_dht_sensor_data((gpio_num_t)DHT_IO, DHT11, &dht_data);
+
+    if (res == DHT_OK) {
+        success = true;
+        this->current_temperature = (dht_data.temperature * 1.8f) + 32.0f;
+        this->current_humidity = dht_data.humidity;
+        ESP_LOGD(TAG, "DHT sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
+    }
+#endif
 
     if (success) {
     #if defined(CONFIG_FIRMWARE_USE_WEB)

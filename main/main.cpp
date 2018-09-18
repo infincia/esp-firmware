@@ -16,7 +16,7 @@
 #include "oled.hpp"
 #endif
 
-#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 #include "temperature.hpp"
 #endif
 
@@ -59,7 +59,7 @@ IR ir;
 OLED oled;
 #endif
 
-#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 Temperature temperature;
 #endif
 
@@ -227,7 +227,7 @@ void setup_queues() {
 void setup_sensor(std::string& device_name, std::string& device_type, std::string& device_id) {
     ESP_LOGI(TAG, "starting sensor services...");
 
-    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE)
+    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
     temperature.start();
     ESP_LOGI(TAG, "+ Temperature");
     #endif
