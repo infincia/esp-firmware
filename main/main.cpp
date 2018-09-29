@@ -418,7 +418,7 @@ static void stats_task(void *param) {
 
         ESP_LOGI(_TAG, "free: %d, min: %d", free_heap, min_free_heap);
 
-        vTaskDelay(5000 / portTICK_RATE_MS);
+        vTaskDelay(60000 / portTICK_RATE_MS);
     }
 }
 
