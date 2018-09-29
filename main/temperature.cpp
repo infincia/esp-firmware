@@ -243,7 +243,5 @@ void Temperature::send_http() {
         ESP_LOGE(TAG, "http request failed: %s", ex.what());
         throw std::runtime_error("http request failed");
     }
-
-    ESP_LOGI(TAG, "finished writing firmware to flash, closing OTA session");
 }
 #endif
