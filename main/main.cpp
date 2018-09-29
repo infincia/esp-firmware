@@ -60,7 +60,13 @@ OLED oled;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
-Temperature temperature;
+#if !defined(CONFIG_FIRMWARE_TEMPERATURE_ENDPOINT_URL)
+#error "Missing temperature endpoint URL"
+#else
+static const char* TEMPERATURE_ENDPOINT_URL = CONFIG_FIRMWARE_TEMPERATURE_ENDPOINT_URL;
+#endif
+
+Temperature temperature(TEMPERATURE_ENDPOINT_URL);
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_WEB)

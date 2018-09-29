@@ -43,7 +43,9 @@ static void task_wrapper(void *param) {
 }
 
 
-Temperature::Temperature() { }
+Temperature::Temperature(const char* endpoint_url): 
+_endpoint_url(endpoint_url) {
+}
 
 
 Temperature::~Temperature() = default;
