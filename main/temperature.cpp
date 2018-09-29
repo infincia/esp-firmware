@@ -208,7 +208,7 @@ void Temperature::send_http() {
         auto post_body = json.toStringUnformatted();
         const char* _post_body = post_body.c_str();
 
-        ESP_LOGI(TAG, "http request post body: %s", _post_body);
+        ESP_LOGD(TAG, "http request post body: %s", _post_body);
 
         res = http_client.post(_endpoint_url, _post_body);
 
