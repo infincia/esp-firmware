@@ -51,7 +51,9 @@ _endpoint_url(endpoint_url) {
 Temperature::~Temperature() = default;
 
 
-void Temperature::start() {
+void Temperature::start(std::string& device_name) {
+    this->device_name = device_name;
+
     #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
     this->port = SI7021_I2C_MASTER_NUM;
     i2c_config_t conf;

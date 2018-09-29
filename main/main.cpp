@@ -258,7 +258,7 @@ void setup_sensor(std::string& device_name, std::string& device_type, std::strin
     ESP_LOGI(TAG, "starting sensor services...");
 
     #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
-    temperature.start();
+    temperature.start(device_name);
     ESP_LOGI(TAG, "+ Temperature");
     #endif
 
