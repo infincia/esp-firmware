@@ -9,7 +9,7 @@
 
 class Temperature {
 public:
-	Temperature();
+	Temperature(const char* endpoint_url);
 	virtual ~Temperature();
 	void task();
     void start();
@@ -23,6 +23,8 @@ private:
 	float current_humidity = 0.0f;
 
 	bool update();
+    const char* _endpoint_url;
+
 };
 
 #endif /* TEMPERATURE_H_ */
