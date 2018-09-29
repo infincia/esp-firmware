@@ -55,6 +55,13 @@ config FIRMWARE_USE_WEB
     help
         Enables Web interface
 
+config FIRMWARE_TEMPERATURE_ENDPOINT_URL
+    string "Temperature update endpoint URL"
+    depends on FIRMWARE_USE_WEB
+    default ""
+    help
+        Temperature update endpoint URL
+
 config FIRMWARE_WEB_MAX_CONNECTIONS
     int "Maximum simultaneous web connections"
     depends on FIRMWARE_USE_WEB
