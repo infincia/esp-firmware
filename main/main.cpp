@@ -222,7 +222,31 @@ void setup_queues() {
 }
 
 
+void setup_test(std::string& device_name, std::string& device_type, std::string& device_id) {
+    ESP_LOGI(TAG, "starting test services...");
 
+    #if defined(CONFIG_FIRMWARE_USE_AMP)
+    ESP_LOGI(TAG, "+ IR control");
+    ir.start();
+    ESP_LOGI(TAG, "+ OLED display");
+    oled.start();
+    #endif
+
+    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
+    temperature.start(device_name);
+    ESP_LOGI(TAG, "+ Temperature");
+    #endif
+
+    #if defined(CONFIG_FIRMWARE_USE_AWS)
+    ESP_LOGI(TAG, "+ AWS");
+    aws.start(device_name);
+    #endif
+
+    #if defined(CONFIG_FIRMWARE_USE_HOMEKIT)
+    ESP_LOGI(TAG, "+ Homekit");
+    homekit.start(device_name, device_type, device_id);
+    #endif
+}
 
 void setup_sensor(std::string& device_name, std::string& device_type, std::string& device_id) {
     ESP_LOGI(TAG, "starting sensor services...");
@@ -343,8 +367,9 @@ void setup_device(std::string& device_id) {
             setup_amp(device_name, device_type, device_id);
         } else if (device_type == "sensor") {
             setup_sensor(device_name, device_type, device_id);
+        } else if (device_type == "test") {
+            setup_test(device_name, device_type, device_id);
         }
-
         xEventGroupSetBits(provisioning_event_group, PROVISIONED_BIT);
     }
 }
