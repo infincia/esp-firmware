@@ -4,6 +4,11 @@
 #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 
 #include "temperature.hpp"
+#include <JSON.h>
+
+extern const char letsencrypt_chain_pem_start[] asm("_binary_letsencrypt_chain_pem_start");
+extern const char letsencrypt_chain_pem_end[] asm("_binary_letsencrypt_chain_pem_end");
+
 
 
 extern "C" {
@@ -108,6 +113,12 @@ bool Temperature::update() {
 
     if (success) {
     #if defined(CONFIG_FIRMWARE_USE_WEB)
+        try {
+            this->send_http();
+        } catch (std::exception &ex) {
+            ESP_LOGE(TAG, "%s", ex.what());
+        }
+
         {
             IPCMessage message;
             message.messageType = EventTemperatureSensorValue;
@@ -167,4 +178,72 @@ void Temperature::task() {
     }
 }
 
+/**
+ *
+ * @brief HTTP endpoint support
+ */
+
+void Temperature::send_http() {
+    long timeout = 5000;
+    char user_agent[32];
+    snprintf(user_agent, sizeof(user_agent), "%s/%s", "firmware", FIRMWARE_VERSION);
+
+    HTTPSClient http_client(user_agent, letsencrypt_chain_pem_start, timeout);
+
+    int res;
+    try {
+        memset(this->_text, 0, TEXT_BUFFSIZE);
+
+        http_client.set_read_cb([&] (const char* buf, int length) {
+            memcpy(_text, buf, length);
+        });
+
+            
+        auto json = JSON::createObject();
+
+        json.setDouble("temperature", this->current_temperature);
+        json.setDouble("humidity", this->current_humidity);
+        json.setString("device_name", this->device_name);
+
+        auto post_body = json.toStringUnformatted();
+        const char* _post_body = post_body.c_str();
+
+        ESP_LOGI(TAG, "http request post body: %s", _post_body);
+
+        res = http_client.post(_endpoint_url, _post_body);
+
+        JSON::deleteObject(json);
+
+        if (res >= 500) {
+            throw std::runtime_error("server error");
+        } else if (res == 404) {
+            throw std::runtime_error("no endpoint found at current url");
+        } else if (res == 200) {
+            ESP_LOGI(TAG, "posted temperature");
+        } else {
+            ESP_LOGE(TAG, "unknown request error: %d", res);
+            throw std::runtime_error("HTTP failed");
+        }
+        
+        ESP_LOGD(TAG, "http request success: %d", res);
+
+        std::string body(_text);
+
+        auto m = JSON::parseObject(body);
+
+        bool success_s = m.getBoolean("success");
+
+        JSON::deleteObject(m);
+
+        if (!success_s) {
+            ESP_LOGE(TAG, "success key missing in response");
+            throw std::runtime_error("success key missing in response");
+        }
+    } catch (std::exception &ex) {
+        ESP_LOGE(TAG, "http request failed: %s", ex.what());
+        throw std::runtime_error("http request failed");
+    }
+
+    ESP_LOGI(TAG, "finished writing firmware to flash, closing OTA session");
+}
 #endif
