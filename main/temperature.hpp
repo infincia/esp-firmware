@@ -12,7 +12,7 @@ public:
 	Temperature(const char* endpoint_url);
 	virtual ~Temperature();
 	void task();
-    void start();
+    void start(std::string& device_name);
 
 private:
     TaskHandle_t temperature_task_handle;
@@ -21,6 +21,8 @@ private:
 
 	float current_temperature = 0.0f;
 	float current_humidity = 0.0f;
+
+	std::string device_name;
 
 	bool update();
     const char* _endpoint_url;
