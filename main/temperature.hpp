@@ -7,6 +7,9 @@
 #ifndef TEMPERATURE_H_
 #define TEMPERATURE_H_
 
+#define TEXT_BUFFSIZE 1024
+
+
 class Temperature {
 public:
 	Temperature(const char* endpoint_url);
@@ -25,7 +28,12 @@ private:
 	std::string device_name;
 
 	bool update();
+
+    void send_http();
+
     const char* _endpoint_url;
+
+    char _text[TEXT_BUFFSIZE + 1] = {0};
 
 };
 
