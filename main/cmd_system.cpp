@@ -129,7 +129,7 @@ static int provision_device(int argc, char **argv) {
 
 static void register_provision_device() {
     provision_device_args.name = arg_strn("n", "name", "<name>", 1, 1, "Name of device");
-    provision_device_args.type = arg_strn("t", "type", "<sensor/amp/camera>", 1, 1, "Type of device");
+    provision_device_args.type = arg_strn("t", "type", "<sensor/amp/camera/test>", 1, 1, "Type of device");
     provision_device_args.end = arg_end(2);
 
     const esp_console_cmd_t cmd = {
