@@ -72,7 +72,7 @@ void Temperature::start(std::string& device_name) {
     i2c_driver_install(this->port, conf.mode, SI7021_I2C_MASTER_RX_BUF_DISABLE,
         SI7021_I2C_MASTER_TX_BUF_DISABLE, 0);
     #endif
-    xTaskCreate(&task_wrapper, "temperature_task", 4096, this, (tskIDLE_PRIORITY + 10),
+    xTaskCreate(&task_wrapper, "temperature_task", 8192, this, (tskIDLE_PRIORITY + 10),
         &this->temperature_task_handle);
 }
 
