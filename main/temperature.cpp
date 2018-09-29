@@ -163,7 +163,7 @@ void Temperature::task() {
     
     while (true) {
         this->update();
-        vTaskDelay(2000 / portTICK_RATE_MS);
+        vTaskDelay(15000 / portTICK_RATE_MS);
     }
 }
 
