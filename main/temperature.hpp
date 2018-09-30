@@ -33,6 +33,8 @@ private:
 
     const char* _endpoint_url;
 
+    std::string packet;
+
     char _text[TEXT_BUFFSIZE + 1] = {0};
 
 };
