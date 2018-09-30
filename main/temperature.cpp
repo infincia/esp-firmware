@@ -2,6 +2,11 @@
 
 
 #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
+#include "lwip/err.h"
+#include "lwip/sockets.h"
+#include "lwip/sys.h"
+#include "lwip/netdb.h"
+#include "lwip/dns.h"
 
 #include "temperature.hpp"
 #include <JSON.h>
@@ -55,6 +60,26 @@ _endpoint_url(endpoint_url) {
 
 Temperature::~Temperature() = default;
 
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_UDP_ENDPOINT)
+void Temperature::udp_endpoint_init(const char *ipaddr, unsigned long port ) {
+    ESP_LOGI(TAG, "initializing udp endpoint...");
+    if( (this->fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0 ) {
+       ESP_LOGE(TAG, "can't open socket");
+       return;
+    }
+
+    uint32_t ip_addr_bytes;
+    inet_aton(ipaddr, &ip_addr_bytes);
+    ESP_LOGI(TAG, "sending packets to to 0x%x", ip_addr_bytes);
+
+    memset( &this->serveraddr, 0, sizeof(this->serveraddr) );
+    this->serveraddr.sin_family = AF_INET;
+    this->serveraddr.sin_port = htons( port );
+    this->serveraddr.sin_addr.s_addr = ip_addr_bytes;
+
+    return;
+}
+#endif
 
 void Temperature::start(std::string& device_name) {
     this->device_name = device_name;
@@ -72,6 +97,11 @@ void Temperature::start(std::string& device_name) {
     i2c_driver_install(this->port, conf.mode, SI7021_I2C_MASTER_RX_BUF_DISABLE,
         SI7021_I2C_MASTER_TX_BUF_DISABLE, 0);
     #endif
+
+    #if defined(CONFIG_FIRMWARE_TEMPERATURE_UDP_ENDPOINT)
+    udp_endpoint_init(CONFIG_FIRMWARE_TEMPERATURE_UDP_IP, CONFIG_FIRMWARE_TEMPERATURE_UDP_PORT);
+    #endif
+
     xTaskCreate(&task_wrapper, "temperature_task", 8192, this, (tskIDLE_PRIORITY + 10),
         &this->temperature_task_handle);
 }
@@ -123,6 +153,12 @@ bool Temperature::update() {
         const char* _packet = this->packet.c_str();
 
         JSON::deleteObject(json);
+
+
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_UDP_ENDPOINT)
+        ESP_LOGD(TAG, "Sending UDP packet: %s", _packet);
+        sendto(fd, _packet, strlen(_packet), 0, (struct sockaddr *)&this->serveraddr, sizeof(this->serveraddr));
+#endif
 
         try {
             this->send_http();
