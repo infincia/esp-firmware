@@ -111,13 +111,15 @@ bool Temperature::update() {
     }
 #endif
 
-    if (success) {
-    #if defined(CONFIG_FIRMWARE_USE_WEB)
+    if (success) {    
+        
         try {
             this->send_http();
         } catch (std::exception &ex) {
             ESP_LOGE(TAG, "%s", ex.what());
         }
+
+    #if defined(CONFIG_FIRMWARE_USE_WEB)
 
         {
             IPCMessage message;
