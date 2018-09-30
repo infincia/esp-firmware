@@ -62,6 +62,27 @@ config FIRMWARE_TEMPERATURE_ENDPOINT_URL
     help
         Temperature update endpoint URL
 
+
+config FIRMWARE_TEMPERATURE_UDP_ENDPOINT
+    bool "Enable UDP sensor server"
+    default true
+    help
+        Enables UDP temperature endpoint
+
+config FIRMWARE_TEMPERATURE_UDP_IP
+    string "Remote IP address of UDP sensor server"
+    depends on FIRMWARE_TEMPERATURE_UDP_ENDPOINT
+    default "192.168.40.10"
+    help
+        Remote IP address of UDP sensor server
+
+config FIRMWARE_TEMPERATURE_UDP_PORT
+    int "Remote port address of UDP sensor server"
+    depends on FIRMWARE_TEMPERATURE_UDP_ENDPOINT
+    default 8445
+    help
+        Remote port address of UDP sensor server
+
 config FIRMWARE_WEB_MAX_CONNECTIONS
     int "Maximum simultaneous web connections"
     depends on FIRMWARE_USE_WEB
