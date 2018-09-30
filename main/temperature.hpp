@@ -40,10 +40,12 @@ private:
 #endif
 
 
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_UDP_ENDPOINT)
     void udp_endpoint_init(const char *ipaddr, unsigned long port );
 
     int fd;
     struct sockaddr_in serveraddr;
+#endif
 
     std::string packet;
 };
