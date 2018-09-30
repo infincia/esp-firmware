@@ -52,10 +52,13 @@ static void task_wrapper(void *param) {
     instance->task();
 }
 
-
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
 Temperature::Temperature(const char* endpoint_url): 
 _endpoint_url(endpoint_url) {
 }
+#else
+Temperature::Temperature() {}
+#endif
 
 
 Temperature::~Temperature() = default;
@@ -160,11 +163,13 @@ bool Temperature::update() {
         sendto(fd, _packet, strlen(_packet), 0, (struct sockaddr *)&this->serveraddr, sizeof(this->serveraddr));
 #endif
 
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
         try {
             this->send_http();
         } catch (std::exception &ex) {
             ESP_LOGE(TAG, "%s", ex.what());
         }
+#endif
 
     #if defined(CONFIG_FIRMWARE_USE_WEB)
 
@@ -231,6 +236,7 @@ void Temperature::task() {
  *
  * @brief HTTP endpoint support
  */
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
 
 void Temperature::send_http() {
     long timeout = 5000;
@@ -283,4 +289,6 @@ void Temperature::send_http() {
         throw std::runtime_error("http request failed");
     }
 }
+#endif
+
 #endif
