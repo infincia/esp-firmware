@@ -31,6 +31,11 @@ private:
 
     void send_http();
 
+    void udp_endpoint_init(const char *ipaddr, unsigned long port );
+
+    int fd;
+    struct sockaddr_in serveraddr;
+
     const char* _endpoint_url;
 
     std::string packet;
