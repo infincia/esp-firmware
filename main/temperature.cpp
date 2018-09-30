@@ -113,6 +113,17 @@ bool Temperature::update() {
 
     if (success) {    
         
+        auto json = JSON::createObject();
+
+        json.setDouble("temperature", this->current_temperature);
+        json.setDouble("humidity", this->current_humidity);
+        json.setString("device_name", this->device_name);
+
+        this->packet = json.toStringUnformatted();
+        const char* _packet = this->packet.c_str();
+
+        JSON::deleteObject(json);
+
         try {
             this->send_http();
         } catch (std::exception &ex) {
@@ -200,21 +211,11 @@ void Temperature::send_http() {
             memcpy(_text, buf, length);
         });
 
-            
-        auto json = JSON::createObject();
-
-        json.setDouble("temperature", this->current_temperature);
-        json.setDouble("humidity", this->current_humidity);
-        json.setString("device_name", this->device_name);
-
-        auto post_body = json.toStringUnformatted();
-        const char* _post_body = post_body.c_str();
+        const char* _post_body = this->packet.c_str();
 
         ESP_LOGD(TAG, "http request post body: %s", _post_body);
 
         res = http_client.post(_endpoint_url, _post_body);
-
-        JSON::deleteObject(json);
 
         if (res >= 500) {
             throw std::runtime_error("server error");
