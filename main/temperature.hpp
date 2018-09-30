@@ -12,7 +12,11 @@
 
 class Temperature {
 public:
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
 	Temperature(const char* endpoint_url);
+#else
+    Temperature();
+#endif
 	virtual ~Temperature();
 	void task();
     void start(std::string& device_name);
@@ -29,19 +33,19 @@ private:
 
 	bool update();
 
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
     void send_http();
+    const char* _endpoint_url;
+    char _text[TEXT_BUFFSIZE + 1] = {0};
+#endif
+
 
     void udp_endpoint_init(const char *ipaddr, unsigned long port );
 
     int fd;
     struct sockaddr_in serveraddr;
 
-    const char* _endpoint_url;
-
     std::string packet;
-
-    char _text[TEXT_BUFFSIZE + 1] = {0};
-
 };
 
 #endif /* TEMPERATURE_H_ */

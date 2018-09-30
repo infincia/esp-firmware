@@ -55,12 +55,18 @@ config FIRMWARE_USE_WEB
     help
         Enables Web interface
 
-config FIRMWARE_TEMPERATURE_ENDPOINT_URL
+config FIRMWARE_TEMPERATURE_HTTP_ENDPOINT
+    bool "Enable HTTP sensor server"
+    default true
+    help
+        Enables temperature HTTP endpoint
+
+config FIRMWARE_TEMPERATURE_HTTP_ENDPOINT_URL
     string "Temperature update endpoint URL"
-    depends on FIRMWARE_USE_WEB
+    depends on FIRMWARE_TEMPERATURE_HTTP_ENDPOINT
     default ""
     help
-        Temperature update endpoint URL
+        Temperature HTTP endpoint URL
 
 
 config FIRMWARE_TEMPERATURE_UDP_ENDPOINT
