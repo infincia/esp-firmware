@@ -132,7 +132,7 @@ endchoice
 
 config FIRMWARE_USE_CONSOLE
     bool "Enable console interface"
-    default false
+    default true
     help
         Enable console interface
 
