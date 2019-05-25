@@ -126,8 +126,10 @@ void Console::task() {
         linenoiseHistoryAdd(line);
 
         /* Save command history to filesystem */
+        #if CONFIG_STORE_HISTORY
         linenoiseHistorySave(HISTORY_PATH);
-
+        #endif
+        
         /* Try to run the command */
         int ret;
         esp_err_t err = esp_console_run(line, &ret);
