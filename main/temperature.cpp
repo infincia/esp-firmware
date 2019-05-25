@@ -148,6 +148,8 @@ bool Temperature::update() {
         
         auto json = JSON::createObject();
 
+        json.setBoolean("heater", false);
+
         json.setDouble("temperature", this->current_temperature);
         json.setDouble("humidity", this->current_humidity);
         json.setString("device_name", this->device_name);
