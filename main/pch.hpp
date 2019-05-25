@@ -53,7 +53,7 @@
 #include <esp_vfs_fat.h>
 #include <esp_wifi.h>
 #include <esp_ota_ops.h>
-#if defined(FIRMWARE_USE_MDNS)
+#if defined(CONFIG_FIRMWARE_USE_MDNS)
 #include <mdns.h>
 #endif
 
