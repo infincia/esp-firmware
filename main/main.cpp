@@ -60,7 +60,7 @@ OLED oled;
 #endif
 
 #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
-#if defined(FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
+#if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
 #if !defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT_URL)
 #error "Missing temperature endpoint URL"
 #else
@@ -241,7 +241,7 @@ void setup_test(std::string& device_name, std::string& device_type, std::string&
     oled.start();
     #endif
 
-    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
+    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
     temperature.start(device_name);
     ESP_LOGI(TAG, "+ Temperature");
     #endif
@@ -260,7 +260,7 @@ void setup_test(std::string& device_name, std::string& device_type, std::string&
 void setup_sensor(std::string& device_name, std::string& device_type, std::string& device_id) {
     ESP_LOGI(TAG, "starting sensor services...");
 
-    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
+    #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021) || defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
     temperature.start(device_name);
     ESP_LOGI(TAG, "+ Temperature");
     #endif

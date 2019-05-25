@@ -24,7 +24,7 @@
 
 static const char *TAG = "[Web]";
 
-#if defined(FIRMWARE_USE_MDNS)
+#if defined(CONFIG_FIRMWARE_USE_MDNS)
 static void initialise_mdns(const char* name, uint16_t port) {
     //initialize mDNS
     ESP_ERROR_CHECK( mdns_init() );
@@ -418,7 +418,7 @@ void Web::task() {
 
     this->webServer.start(this->port);
 
-#if defined(FIRMWARE_USE_MDNS)
+#if defined(CONFIG_FIRMWARE_USE_MDNS)
     initialise_mdns(this->device_name.c_str(), this->port);
 #endif
 
