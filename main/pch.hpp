@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sdkconfig.h"
+#include "../build/include/sdkconfig.h"
 
 /**
  * Standard library
