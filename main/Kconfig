@@ -3,7 +3,7 @@ menu "Firmware"
 config FIRMWARE_USE_AMP
     bool "Enable Amplifier Support"
     depends on MAX9744_ESPIDF_ENABLED
-    default true
+    default false
     help
         Enable Amplifier Support via MAX9744
 
@@ -17,7 +17,7 @@ config FIRMWARE_USE_MDNS
 config FIRMWARE_USE_AWS
     bool "Enable AWS"
     depends on AWS_IOT_SDK
-    default true
+    default false
     help
         Enable AWS support
 
@@ -25,7 +25,7 @@ config FIRMWARE_USE_AWS
 config FIRMWARE_USE_HOMEKIT
     bool "Enable Homekit"
     depends on FIRMWARE_USE_TEMPERATURE_SI7021
-    default true
+    default false
     help
         Enable Homekit support
 
@@ -51,13 +51,13 @@ config FIRMWARE_OTA_MANIFEST_URL
 
 config FIRMWARE_USE_WEB
     bool "Enable Web"
-    default true
+    default false
     help
         Enables Web interface
 
 config FIRMWARE_TEMPERATURE_HTTP_ENDPOINT
     bool "Enable HTTP sensor server"
-    default true
+    default false
     help
         Enables temperature HTTP endpoint
 
@@ -106,7 +106,7 @@ config FIRMWARE_WEB_PORT
 config FIRMWARE_USE_WEB_WEBSOCKET
     bool "Enable Websockets in web interface"
     depends on FIRMWARE_USE_WEB
-    default true
+    default false
     help
         Enable Websockets in web interface
 
