@@ -38,7 +38,9 @@ static const char *TAG = "[Temperature]";
 #define SI7021_I2C_MASTER_TX_BUF_DISABLE 0
 #define SI7021_I2C_MASTER_RX_BUF_DISABLE 0
 #define SI7021_I2C_MASTER_FREQ_HZ 100000
-#elif defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
+#endif
+
+#if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
 #define DHT_IO 27
 #endif
 
