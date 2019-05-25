@@ -273,7 +273,7 @@ CONFIG_PM_ENABLE=
 #
 # nkolban's c++ wrappers
 #
-CONFIG_NKOLBAN=y
+CONFIG_NKOLBAN=
 
 #
 # ADC-Calibration
