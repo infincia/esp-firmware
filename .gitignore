@@ -12,3 +12,4 @@ cmake-build-debug
 main/version.cpp
 .mypy_cache
 main/sdkconfig.h
+.vscode
