@@ -230,7 +230,7 @@ bool Temperature::update() {
 void Temperature::task() {
     ESP_LOGI(TAG, "running");
     
-    esp_err_t err = setHeaterState(this->port, 0x04, true);
+    esp_err_t err = setHeaterState(this->port, 0x04, false);
 
     while (true) {
         this->update();
