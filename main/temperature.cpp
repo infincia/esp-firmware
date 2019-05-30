@@ -230,6 +230,8 @@ bool Temperature::update() {
 void Temperature::task() {
     ESP_LOGI(TAG, "running");
     
+    esp_err_t err = setHeaterState(this->port, 0x04, true);
+
     while (true) {
         this->update();
         vTaskDelay(15000 / portTICK_RATE_MS);
