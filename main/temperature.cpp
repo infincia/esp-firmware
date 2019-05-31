@@ -261,7 +261,7 @@ void Temperature::task() {
             }
         }
         this->update();
-        vTaskDelay(10000 / portTICK_RATE_MS);
+        vTaskDelay(3000 / portTICK_RATE_MS);
     }
 }
 
