@@ -231,8 +231,6 @@ bool Temperature::update() {
 
 void Temperature::task() {
     ESP_LOGI(TAG, "running");
-    
-    esp_err_t err = setHeaterState(this->port, 0x04, false);
 
     esp_err_t err;
     err = getHeaterState(this->port, &this->heater_state);
@@ -249,6 +247,19 @@ void Temperature::task() {
         ESP_LOGW(TAG, "getHeaterLevel: %d", this->heater_level);
     }
     while (true) {
+        IPCMessage message;
+        if (xQueueReceive(heaterQueue, &(message), (TickType_t)10)) {
+            ESP_LOGV(TAG, "message received");
+
+            if (message.messageType == EventTemperatureHeaterControl) {
+                this->heater_state = message.heater_state;
+                this->heater_level = message.heater_level;
+
+                err = setHeaterState(this->port, this->heater_level, this->heater_state);
+                if (err != ESP_OK)
+                    ESP_LOGE(TAG, "setHeaterState: %s", esp_err_to_name(err));
+            }
+        }
         this->update();
         vTaskDelay(10000 / portTICK_RATE_MS);
     }
