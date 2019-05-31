@@ -2,13 +2,13 @@
 
 
 #include "pch.hpp"
+#include <esp_http_server.h>
+
 
 #if defined(CONFIG_FIRMWARE_USE_WEB)
 
 #ifndef WEB_H_
 #define WEB_H_
-
-#include "HttpServer.h"
 
 class Web {
 public:
@@ -23,9 +23,15 @@ public:
     float temperature = 0.0;
 	float humidity = 0.0;
 
+	bool heater_state = false;
+	uint8_t heater_level = 0;
+
     uint8_t volume = 0;
+	char content[4096];
 
 private:
+	void configure();
+
 	TaskHandle_t web_task_handle;
 
     uint16_t port;
@@ -35,7 +41,7 @@ private:
     void send_temperature(float current_temperature, float current_humidity);
 #endif
 
-    HttpServer webServer;
+    httpd_handle_t server;
 };
 
 #endif /* WEB_H_ */

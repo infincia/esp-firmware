@@ -11,8 +11,7 @@
 
 #include <JSON.h>
 
-#include "HttpRequest.h"
-#include "HttpResponse.h"
+
 
 #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 #include "WebSocket.h"
@@ -78,19 +77,18 @@ static void task_wrapper(void *param) {
  * @brief Web routes
  */
 
-static void handle_index(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "text/html");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
-    response->sendData(index_page);
-    response->close();
+static esp_err_t handle_get_index(httpd_req_t *req) {
+    httpd_resp_set_hdr(req, "Content-Type", "text/html");
+    httpd_resp_send(req, index_page, strlen(index_page));
+    return ESP_OK;
 }
 
 
-static void handle_get_status(HttpRequest *request, HttpResponse *response, void* ctx) {
-    Web *instance = static_cast<Web *>(ctx);
+static esp_err_t handle_get_status(httpd_req_t *req) {
+    Web *instance = static_cast<Web *>(req->user_ctx);
 
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
+
     size_t free_heap = heap_caps_get_free_size(MALLOC_CAP_8BIT);
     size_t min_free_heap = heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT);
 
@@ -100,20 +98,26 @@ static void handle_get_status(HttpRequest *request, HttpResponse *response, void
     json.setInt("m", min_free_heap);
     json.setString("v", FIRMWARE_VERSION);
     json.setInt("vol", instance->volume);
+    json.setDouble("t", instance->temperature); 
+    json.setDouble("h", instance->humidity); 
+    json.setBoolean("hes", instance->heater_state); 
+    json.setInt("hel", instance->heater_level); 
 
-    response->sendData(json.toStringUnformatted());
+    std::string s = json.toStringUnformatted();
 
-    response->close();
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
+
 
     JSON::deleteObject(json);
+
+    return ESP_OK;
 }
 
 
-static void handle_get_provision(HttpRequest *request, HttpResponse *response, void* ctx) {
-    Web *instance = static_cast<Web *>(ctx);
+static esp_err_t handle_get_provision(httpd_req_t *req) {
+    Web *instance = static_cast<Web *>(req->user_ctx);
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
 
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
 
     auto json_response = JSON::createObject();
 
@@ -129,18 +133,102 @@ static void handle_get_provision(HttpRequest *request, HttpResponse *response, v
     }
     #endif
 
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
 
     JSON::deleteObject(json_response);
 
+    return ESP_OK;
+
 }
 
-static void handle_set_provision(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+static esp_err_t handle_post_heater(httpd_req_t *req) {
+    Web *instance = static_cast<Web *>(req->user_ctx);
 
-    std::string body(request->getBody());
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
+
+    /* Truncate if content length larger than the buffer */
+    size_t recv_size = MIN(req->content_len, sizeof(instance->content));
+
+    int ret = httpd_req_recv(req, instance->content, recv_size);
+    if (ret <= 0) {  /* 0 return value indicates connection closed */
+        /* Check if timeout occurred */
+        if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+            /* In case of timeout one can choose to retry calling
+             * httpd_req_recv(), but to keep it simple, here we
+             * respond with an HTTP 408 (Request Timeout) error */
+            httpd_resp_send_408(req);
+        }
+        /* In case of error, returning ESP_FAIL will
+         * ensure that the underlying socket is closed */
+        return ESP_FAIL;
+    }
+
+    std::string body(reinterpret_cast<char*>(instance->content), recv_size);
+
+
+    auto m = JSON::parseObject(body);
+
+	std::string temp1;
+    bool heater_state = m.getBoolean("hes");
+
+    if (heater_state) {
+        temp1 = "1";
+    } else {
+        temp1 = "0";
+    }
+    
+    static char temp2[100];
+    auto heater_level = m.getInt("hel");
+    sprintf(temp2, "%d", heater_level);
+
+    JSON::deleteObject(m);
+
+    auto json_response = JSON::createObject();
+
+    IPCMessage message;
+    message.messageType = EventTemperatureHeaterControl;
+    message.heater_state = heater_state;
+    message.heater_level = heater_level;
+
+    if (!xQueueOverwrite(heaterQueue, (void *)&message)) {
+        ESP_LOGE(TAG, "Setting heater state failed");
+        json_response.setBoolean("success", false); 
+    } else {
+        json_response.setBoolean("success", true); 
+    }
+
+    std::string s = json_response.toStringUnformatted();
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
+    JSON::deleteObject(json_response);
+    return ESP_OK;
+}
+
+static esp_err_t handle_post_provision(httpd_req_t *req) {
+    Web *instance = static_cast<Web *>(req->user_ctx);
+
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
+
+    /* Truncate if content length larger than the buffer */
+    size_t recv_size = MIN(req->content_len, sizeof(instance->content));
+
+    int ret = httpd_req_recv(req, instance->content, recv_size);
+    if (ret <= 0) {  /* 0 return value indicates connection closed */
+        /* Check if timeout occurred */
+        if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+            /* In case of timeout one can choose to retry calling
+             * httpd_req_recv(), but to keep it simple, here we
+             * respond with an HTTP 408 (Request Timeout) error */
+            httpd_resp_send_408(req);
+        }
+        /* In case of error, returning ESP_FAIL will
+         * ensure that the underlying socket is closed */
+        return ESP_FAIL;
+    }
+
+    std::string body(reinterpret_cast<char*>(instance->content), recv_size);
+
 
     auto m = JSON::parseObject(body);
 
@@ -162,8 +250,10 @@ static void handle_set_provision(HttpRequest *request, HttpResponse *response, v
         json_response.setBoolean("success", false); 
     }
 
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
+
 
     JSON::deleteObject(json_response);
 
@@ -174,14 +264,35 @@ static void handle_set_provision(HttpRequest *request, HttpResponse *response, v
         vTaskDelay(2000 / portTICK_RATE_MS);
         esp_restart();
     }
+
+    return ESP_OK;
 }
 
 
-static void handle_set_identify(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+static esp_err_t handle_post_identify(httpd_req_t *req) {
+    Web *instance = static_cast<Web *>(req->user_ctx);
 
-    std::string body(request->getBody());
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
+
+
+    /* Truncate if content length larger than the buffer */
+    size_t recv_size = MIN(req->content_len, sizeof(instance->content));
+
+    int ret = httpd_req_recv(req, instance->content, recv_size);
+    if (ret <= 0) {  /* 0 return value indicates connection closed */
+        /* Check if timeout occurred */
+        if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+            /* In case of timeout one can choose to retry calling
+             * httpd_req_recv(), but to keep it simple, here we
+             * respond with an HTTP 408 (Request Timeout) error */
+            httpd_resp_send_408(req);
+        }
+        /* In case of error, returning ESP_FAIL will
+         * ensure that the underlying socket is closed */
+        return ESP_FAIL;
+    }
+
+    std::string body(reinterpret_cast<char*>(instance->content), recv_size);
 
     auto m = JSON::parseObject(body);
 
@@ -202,20 +313,38 @@ static void handle_set_identify(HttpRequest *request, HttpResponse *response, vo
         json_response.setBoolean("success", true); 
     }
     
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
 
     JSON::deleteObject(json_response);
 
+    return ESP_OK;
 }
 
 #if defined(CONFIG_FIRMWARE_USE_AMP)
 
-static void handle_volume_set(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+static esp_err_t handle_post_volume_set(httpd_req_t *req) {
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
 
-    std::string body(request->getBody());
+    /* Truncate if content length larger than the buffer */
+    size_t recv_size = MIN(req->content_len, sizeof(instance->content));
+
+    int ret = httpd_req_recv(req, instance->content, recv_size);
+    if (ret <= 0) {  /* 0 return value indicates connection closed */
+        /* Check if timeout occurred */
+        if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+            /* In case of timeout one can choose to retry calling
+             * httpd_req_recv(), but to keep it simple, here we
+             * respond with an HTTP 408 (Request Timeout) error */
+            httpd_resp_send_408(req);
+        }
+        /* In case of error, returning ESP_FAIL will
+         * ensure that the underlying socket is closed */
+        return ESP_FAIL;
+    }
+
+    std::string body(reinterpret_cast<char*>(instance->content), recv_size);
 
     auto m = JSON::parseObject(body);
 
@@ -232,15 +361,18 @@ static void handle_volume_set(HttpRequest *request, HttpResponse *response, void
         json_response.setBoolean("success", true); 
     }
 
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
+
 
     JSON::deleteObject(json_response);
+
+    return ESP_OK;
 }
 
-static void handle_volume_up(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+static esp_err_t handle_post_volume_up(httpd_req_t *req) {
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
 
     auto json_response = JSON::createObject();
 
@@ -251,15 +383,17 @@ static void handle_volume_up(HttpRequest *request, HttpResponse *response, void*
         json_response.setBoolean("success", true); 
     }
 
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
 
     JSON::deleteObject(json_response);
+
+    return ESP_OK;
 }
 
-static void handle_volume_down(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+static esp_err_t handle_post_volume_down(httpd_req_t *req) {
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
 
     auto json_response = JSON::createObject();
 
@@ -270,33 +404,38 @@ static void handle_volume_down(HttpRequest *request, HttpResponse *response, voi
         json_response.setBoolean("success", true); 
     }
 
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
 
     JSON::deleteObject(json_response);
+
+    return ESP_OK;
 }
 
 #endif
 
-static void handle_restart(HttpRequest *request, HttpResponse *response, void* ctx) {
-    response->addHeader("Content-Type", "application/json");
-    response->setStatus(HttpResponse::HTTP_STATUS_OK, "OK");
+static esp_err_t handle_post_restart(httpd_req_t *req) {
+    httpd_resp_set_hdr(req, "Content-Type", "application/json");
 
     auto json_response = JSON::createObject();
 
     json_response.setBoolean("success", true); 
 
-    response->sendData(json_response.toStringUnformatted());
-    response->close();
+    std::string s = json_response.toStringUnformatted();
+
+    httpd_resp_send(req, s.c_str(), strlen(s.c_str()));
 
     JSON::deleteObject(json_response);
 
     vTaskDelay(2000 / portTICK_RATE_MS);
     esp_restart();
+
+    return ESP_OK;
 }
 
 #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
-static void handle_websocket(HttpRequest *request, HttpResponse *response, void* ctx) {
+static esp_err_t handle_get_websocket(httpd_req_t *req) {
     auto ws = request->getWebSocket();
     if (ws != nullptr) {
         Conn *c = new Conn(ws);
@@ -307,6 +446,8 @@ static void handle_websocket(HttpRequest *request, HttpResponse *response, void*
 
         ESP_LOGD(TAG, "Added connection to list, now have %d connections", len);
     }
+
+    return ESP_OK;
 }
 
 void Web::send_volume(int current_volume) {
@@ -371,7 +512,9 @@ Web::Web(uint16_t port): port(port) { }
 
 
 Web::~Web() {
-    this->webServer.stop();
+    if (this->server) {
+        httpd_stop(this->server);
+    }
 }
 
 void Web::start(std::string& device_name, std::string& device_type) {
@@ -383,6 +526,112 @@ void Web::start(std::string& device_name, std::string& device_type) {
     xTaskCreate(&task_wrapper, "web_task", 3072, this, (tskIDLE_PRIORITY + 10), &this->web_task_handle);
 }
 
+void Web::configure() {
+    httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+
+    if (httpd_start(&this->server, &config) == ESP_OK) {
+        httpd_uri_t uri_get_index = {
+            .uri      = "/",
+            .method   = HTTP_GET,
+            .handler  = handle_get_index,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_get_index);
+
+ 
+        #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
+        httpd_uri_t uri_ws_get = {
+            .uri      = "/ws",
+            .method   = HTTP_GET,
+            .handler  = handle_websocket,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_ws_get);
+        #endif
+
+
+        httpd_uri_t uri_get_status = {
+            .uri      = "/status",
+            .method   = HTTP_GET,
+            .handler  = handle_get_status,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_get_status);
+
+        httpd_uri_t uri_post_heater = {
+            .uri      = "/heater",
+            .method   = HTTP_POST,
+            .handler  = handle_post_heater,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_heater);
+
+
+        httpd_uri_t uri_post_provision = {
+            .uri      = "/provision",
+            .method   = HTTP_POST,
+            .handler  = handle_post_provision,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_provision);
+
+
+        httpd_uri_t uri_get_provision = {
+            .uri      = "/provision",
+            .method   = HTTP_GET,
+            .handler  = handle_get_provision,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_get_provision);
+
+
+        httpd_uri_t uri_post_identify = {
+            .uri      = "/identify",
+            .method   = HTTP_POST,
+            .handler  = handle_post_identify,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_identify);
+
+
+        httpd_uri_t uri_post_restart = {
+            .uri      = "/restart",
+            .method   = HTTP_POST,
+            .handler  = handle_post_restart,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_restart);
+
+
+        #if defined(CONFIG_FIRMWARE_USE_AMP)
+        httpd_uri_t uri_post_volume_set = {
+            .uri      = "/volume/set",
+            .method   = HTTP_POST,
+            .handler  = handle_post_volume_set,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_volume_set);
+
+
+        httpd_uri_t uri_post_volume_up = {
+            .uri      = "/volume/up",
+            .method   = HTTP_POST,
+            .handler  = handle_post_volume_up,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_volume_up);
+
+
+        httpd_uri_t uri_post_volume_down = {
+            .uri      = "/volume/down",
+            .method   = HTTP_POST,
+            .handler  = handle_post_volume_down,
+            .user_ctx = this
+        };
+        httpd_register_uri_handler(this->server, &uri_post_volume_down);
+        #endif
+    }
+}
 
 void Web::task() {
     ESP_LOGI(TAG, "running");
@@ -390,33 +639,7 @@ void Web::task() {
     /* Wait for WiFI to show as connected */
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT, false, true, portMAX_DELAY);
 
-    this->webServer.setContext(this);
-
-    this->webServer.addPathHandler("GET", "/", handle_index);
-
-#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
-    this->webServer.addPathHandler("GET", "/ws", handle_websocket);
-#endif
-
-    this->webServer.addPathHandler("GET", "/status", handle_get_status);
-
-    this->webServer.addPathHandler("POST", "/provision", handle_set_provision);
-
-    this->webServer.addPathHandler("GET", "/provision", handle_get_provision);
-
-    this->webServer.addPathHandler("POST", "/identify", handle_set_identify);
-
-    this->webServer.addPathHandler("POST", "/restart", handle_restart);
-
-#if defined(CONFIG_FIRMWARE_USE_AMP)
-    this->webServer.addPathHandler("POST", "/volume/set", handle_volume_set);
-
-    this->webServer.addPathHandler("POST", "/volume/up", handle_volume_up);
-
-    this->webServer.addPathHandler("POST", "/volume/down", handle_volume_down);
-#endif
-
-    this->webServer.start(this->port);
+    this->configure();
 
 #if defined(CONFIG_FIRMWARE_USE_MDNS)
     initialise_mdns(this->device_name.c_str(), this->port);
@@ -435,6 +658,9 @@ void Web::task() {
             } else if (message.messageType == EventTemperatureSensorValue) {
                 this->temperature = message.temperature;
                 this->humidity = message.humidity;
+                this->heater_state = message.heater_state;
+                this->heater_level = message.heater_level;
+
                 #if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
                 this->send_temperature(this->temperature, this->humidity);
                 #endif
