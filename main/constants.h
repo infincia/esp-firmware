@@ -12,3 +12,7 @@
 #define DEVICE_PROVISIONING_TYPE_KEY "device-type"
 
 #define HOMEKIT_PIN_KEY "homekit-pin"
+
+#define HEATER_STATE_KEY "heater-state"
+
+#define HEATER_LEVEL_KEY "heater-level"
