@@ -29,6 +29,9 @@ private:
 	float current_temperature = 0.0f;
 	float current_humidity = 0.0f;
 
+    bool heater_state = false;
+    uint8_t heater_level = 0;
+
 	std::string device_name;
 
 	bool update();
