@@ -7,6 +7,7 @@ typedef enum message_type {
     ControlMessageTypeDisplayText,
     ControlMessageTypeVolumeEvent,
     EventTemperatureSensorValue,
+    EventTemperatureHeaterControl,
     EventIdentifyLED,
     EventErrorLED,
     EventReadyLED
@@ -19,4 +20,6 @@ typedef struct ipc_message {
     float temperature;
     float humidity;
     bool led_state;
+    bool heater_state;
+    uint8_t heater_level;
 } IPCMessage;
