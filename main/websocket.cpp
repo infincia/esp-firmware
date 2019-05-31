@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#if defined(CONFIG_FIRMWARE_USE_WEB)
+#if defined(CONFIG_FIRMWARE_USE_WEBSOCKET)
 
 #include "websocket.hpp"
 
