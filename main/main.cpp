@@ -228,6 +228,12 @@ void setup_queues() {
         ESP_LOGE(TAG, "failed to create LED queue, restarting");
         abort();
     }
+
+    heaterQueue = xQueueCreate(1, sizeof(IPCMessage));
+    if (heaterQueue == nullptr) {
+        ESP_LOGE(TAG, "failed to create heater queue, restarting");
+        abort();
+    }
 }
 
 

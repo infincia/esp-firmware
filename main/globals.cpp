@@ -8,6 +8,8 @@ EventBits_t CONNECTED_BIT = BIT0;
 EventGroupHandle_t provisioning_event_group;
 EventBits_t PROVISIONED_BIT = BIT0;
 
+QueueHandle_t heaterQueue;
+
 
 QueueHandle_t volumeChangeQueue;
 QueueHandle_t displayQueue;
