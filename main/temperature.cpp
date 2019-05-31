@@ -182,6 +182,8 @@ bool Temperature::update() {
             message.messageType = EventTemperatureSensorValue;
             message.temperature = this->current_temperature;
             message.humidity = this->current_humidity;
+            message.heater_state = this->heater_state;
+            message.heater_level= this->heater_level;
 
             ESP_LOGD(TAG, "sending temperature reading to web task");
 
