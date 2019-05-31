@@ -234,6 +234,20 @@ void Temperature::task() {
     
     esp_err_t err = setHeaterState(this->port, 0x04, false);
 
+    esp_err_t err;
+    err = getHeaterState(this->port, &this->heater_state);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "getHeaterState: %s", esp_err_to_name(err));
+    } else {
+        ESP_LOGW(TAG, "getHeaterState: %d", this->heater_state);
+
+    }
+    err = getHeaterLevel(this->port, &this->heater_level);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "getHeaterLevel: %s", esp_err_to_name(err));
+    } else {
+        ESP_LOGW(TAG, "getHeaterLevel: %d", this->heater_level);
+    }
     while (true) {
         this->update();
         vTaskDelay(10000 / portTICK_RATE_MS);
