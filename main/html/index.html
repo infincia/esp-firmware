@@ -160,6 +160,39 @@ R"=====(
                 </select>
             </div>
 
+            <div class="panel bordered">
+                <span class="title">Heater Enable</span>
+    
+                <select class="value" name="heater-state" id='heater-state' mozactionhint="save" onchange="save_heater();">
+                    <option value="true" selected>On</option>
+                    <option value="false" selected>Off</option>
+                </select>
+            </div>
+
+            <div class="panel bordered">
+                <span class="title">Heater Level</span>
+        
+                <select class="value" name="heater-level" id='heater-level' mozactionhint="save" onchange="save_heater();">
+                    <option value="0">0</option> 
+                    <option value="1">1</option> 
+                    <option value="2">2</option> 
+                    <option value="3">3</option> 
+                    <option value="4">4</option> 
+                    <option value="5">5</option> 
+                    <option value="6">6</option> 
+                    <option value="7">7</option> 
+                    <option value="8">8</option> 
+                    <option value="9">9</option> 
+                    <option value="10">10</option> 
+                    <option value="11">11</option> 
+                    <option value="12">12</option> 
+                    <option value="13">13</option> 
+                    <option value="14">14</option>
+                    <option value="15">15</option> 
+
+                </select>
+            </div>
+
             <div class="button-panel">
                 <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
                 <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
@@ -180,6 +213,10 @@ R"=====(
             </div>
 
             <div class="stats">
+                <span id='temp'></span>
+                <br/>
+                <span id='humidity'></span>
+                <br/>
                 <span id='version'></span>
                 <br/>
                 <span id='free'></span>
@@ -205,6 +242,11 @@ R"=====(
                 document.getElementById('min').innerText = `Min: ${(json.m / 1024.0).toFixed(2)}K`;
                 document.getElementById('version').innerText = `Version: ${json.v}`;
                 document.getElementById('volume').innerText = `${json.vol}`;
+                document.getElementById('temp').innerText = `${json.t.toFixed(1)}F`;
+                document.getElementById('humidity').innerText = `${json.h.toFixed(1)}%`;
+                document.getElementById('heater-state').value = json.hes;
+                document.getElementById('heater-level').value = json.hel;
+
             });
         }
 
@@ -227,6 +269,38 @@ R"=====(
                 if (json.t === "amp") {
                     document.getElementById('volume-panel').style.display = "block";
                 }
+            });
+        }
+
+        function save_heater() {
+            let body = {
+                hes: (document.getElementById('heater-state').value === 'true'),
+                hel: parseInt(document.getElementById('heater-level').value),
+            };
+            console.log(body);
+
+            fetch('/heater', {
+                body: JSON.stringify(body),
+                headers: {
+                    'user-agent': 'Firmware/0.0.1',
+                    'content-type': 'application/json'
+                },
+                method: 'POST',
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(json) {
+                let msg = "";
+
+                if (json.success == true) {
+                    msg = "Saved heater configuration";
+                } else {
+                    msg = "Failed to save heater configuration";
+                }
+
+                console.log(msg);
+                document.getElementById('error').value = msg;
             });
         }
 
