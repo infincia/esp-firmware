@@ -14,6 +14,8 @@ extern EventBits_t CONNECTED_BIT;
 extern EventGroupHandle_t provisioning_event_group;
 extern EventBits_t PROVISIONED_BIT;
 
+extern QueueHandle_t heaterQueue;
+
 
 extern QueueHandle_t volumeChangeQueue;
 extern QueueHandle_t displayQueue;
