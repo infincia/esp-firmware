@@ -325,6 +325,8 @@ static esp_err_t handle_post_identify(httpd_req_t *req) {
 #if defined(CONFIG_FIRMWARE_USE_AMP)
 
 static esp_err_t handle_post_volume_set(httpd_req_t *req) {
+    Web *instance = static_cast<Web *>(req->user_ctx);
+
     httpd_resp_set_hdr(req, "Content-Type", "application/json");
 
     /* Truncate if content length larger than the buffer */
