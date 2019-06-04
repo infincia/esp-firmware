@@ -117,6 +117,10 @@ static esp_err_t event_handler(void *ctx, system_event_t *event) {
             ESP_LOGI(_TAG, "lost IP");
             // xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
             break;
+        case SYSTEM_EVENT_STA_STOP:
+            ESP_LOGI(_TAG, "STA stop");
+            // xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+            break;
         case SYSTEM_EVENT_STA_START: {
             ESP_LOGI(_TAG, "STA start");
             esp_err_t err = esp_wifi_connect();
