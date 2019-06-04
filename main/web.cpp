@@ -530,6 +530,7 @@ void Web::start(std::string& device_name, std::string& device_type) {
 
 void Web::configure() {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+    config.max_uri_handlers = 12;
 
     if (httpd_start(&this->server, &config) == ESP_OK) {
         httpd_uri_t uri_get_index = {
