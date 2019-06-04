@@ -26,6 +26,7 @@ extern "C" {
 
 static const char *TAG = "[Temperature]";
 
+static void temperature_update(void *args);
 
 /**
  *
@@ -63,7 +64,11 @@ Temperature::Temperature() {}
 #endif
 
 
-Temperature::~Temperature() = default;
+Temperature::~Temperature() { 
+
+    esp_timer_stop(this->timer);
+    esp_timer_delete(this->timer);
+}
 
 #if defined(CONFIG_FIRMWARE_TEMPERATURE_UDP_ENDPOINT)
 void Temperature::udp_endpoint_init(const char *ipaddr, unsigned long port ) {
@@ -107,6 +112,16 @@ void Temperature::start(std::string& device_name) {
     udp_endpoint_init(CONFIG_FIRMWARE_TEMPERATURE_UDP_IP, CONFIG_FIRMWARE_TEMPERATURE_UDP_PORT);
     #endif
 
+    memset( &this->timer_args, 0, sizeof(this->timer_args) );
+    this->timer_args.name = "temperature_update";
+    this->timer_args.callback = temperature_update;
+    this->timer_args.arg = this;
+    this->timer_args.dispatch_method = ESP_TIMER_TASK;
+
+
+    esp_timer_create(&this->timer_args, &this->timer);
+    esp_timer_start_periodic(this->timer, 3000000);
+    
     xTaskCreate(&task_wrapper, "temperature_task", 8192, this, (tskIDLE_PRIORITY + 10),
         &this->temperature_task_handle);
 }
@@ -116,7 +131,10 @@ void Temperature::start(std::string& device_name) {
  * @brief Update sensor values
  */
 
-bool Temperature::update() {
+static void temperature_update(void *args) {
+    Temperature *instance = static_cast<Temperature *>(args);
+
+
     bool success = false;
 
     esp_err_t ret;
@@ -124,13 +142,13 @@ bool Temperature::update() {
 #if defined(CONFIG_FIRMWARE_USE_TEMPERATURE_SI7021)
     struct si7021_reading si7021_data{};
 
-    ret = readSensors(this->port, &si7021_data);
+    ret = readSensors(instance->port, &si7021_data);
 
     if (ret == ESP_OK) {
         success = true;
-        this->current_temperature = (si7021_data.temperature * 1.8f) + 32.0f;
-        this->current_humidity = si7021_data.humidity;
-        ESP_LOGD(TAG, "si7021 sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
+        instance->current_temperature = (si7021_data.temperature * 1.8f) + 32.0f;
+        instance->current_humidity = si7021_data.humidity;
+        ESP_LOGD(TAG, "si7021 sensor reading: %f° / %f", instance->current_temperature, instance->current_humidity);
     }    
 
 #elif defined(CONFIG_FIRMWARE_USE_TEMPERATURE_DHT11)
@@ -140,9 +158,9 @@ bool Temperature::update() {
 
     if (res == DHT_OK) {
         success = true;
-        this->current_temperature = (dht_data.temperature * 1.8f) + 32.0f;
-        this->current_humidity = dht_data.humidity;
-        ESP_LOGD(TAG, "DHT sensor reading: %f° / %f", this->current_temperature, this->current_humidity);
+        instance->current_temperature = (dht_data.temperature * 1.8f) + 32.0f;
+        instance->current_humidity = dht_data.humidity;
+        ESP_LOGD(TAG, "DHT sensor reading: %f° / %f", instance->current_temperature, instance->current_humidity);
     }
 #endif
 
@@ -150,26 +168,26 @@ bool Temperature::update() {
         
         auto json = JSON::createObject();
 
-        json.setBoolean("heater", this->heater_state);
+        json.setBoolean("heater", instance->heater_state);
 
-        json.setDouble("temperature", this->current_temperature);
-        json.setDouble("humidity", this->current_humidity);
-        json.setString("device_name", this->device_name);
+        json.setDouble("temperature", instance->current_temperature);
+        json.setDouble("humidity", instance->current_humidity);
+        json.setString("device_name", instance->device_name);
 
-        this->packet = json.toStringUnformatted();
-        const char* _packet = this->packet.c_str();
+        instance->packet = json.toStringUnformatted();
+        const char* _packet = instance->packet.c_str();
 
         JSON::deleteObject(json);
 
 
 #if defined(CONFIG_FIRMWARE_TEMPERATURE_UDP_ENDPOINT)
         ESP_LOGD(TAG, "Sending UDP packet: %s", _packet);
-        sendto(fd, _packet, strlen(_packet), 0, (struct sockaddr *)&this->serveraddr, sizeof(this->serveraddr));
+        sendto(instance->fd, _packet, strlen(_packet), 0, (struct sockaddr *)&instance->serveraddr, sizeof(instance->serveraddr));
 #endif
 
 #if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
         try {
-            this->send_http();
+            instance->send_http();
         } catch (std::exception &ex) {
             ESP_LOGE(TAG, "%s", ex.what());
         }
@@ -180,10 +198,10 @@ bool Temperature::update() {
         {
             IPCMessage message;
             message.messageType = EventTemperatureSensorValue;
-            message.temperature = this->current_temperature;
-            message.humidity = this->current_humidity;
-            message.heater_state = this->heater_state;
-            message.heater_level= this->heater_level;
+            message.temperature = instance->current_temperature;
+            message.humidity = instance->current_humidity;
+            message.heater_state = instance->heater_state;
+            message.heater_level= instance->heater_level;
 
             ESP_LOGD(TAG, "sending temperature reading to web task");
 
@@ -197,8 +215,8 @@ bool Temperature::update() {
         {
             IPCMessage message;
             message.messageType = EventTemperatureSensorValue;
-            message.temperature = this->current_temperature;
-            message.humidity = this->current_humidity;
+            message.temperature = instance->current_temperature;
+            message.humidity = instance->current_humidity;
 
     #if defined(CONFIG_FIRMWARE_USE_AWS)
             ESP_LOGD(TAG, "sending temperature reading to aws task");
@@ -220,7 +238,6 @@ bool Temperature::update() {
 
     }
 
-    return success;
 }
 
 
@@ -260,7 +277,6 @@ void Temperature::task() {
                     ESP_LOGE(TAG, "setHeaterState: %s", esp_err_to_name(err));
             }
         }
-        this->update();
         vTaskDelay(3000 / portTICK_RATE_MS);
     }
 }
