@@ -214,7 +214,7 @@ void Homekit::task() {
     ESP_LOGI(TAG, "HAP task provisioned");
 
     #if defined(CONFIG_FIRMWARE_FORCE_HOMEKIT_PIN_DEFAULT)
-    pin = "031-45-154";
+    pin = "053-58-197";
     #else
     // load PIN from kv store, or generate and store a new one
     if (!get_kv(HOMEKIT_PIN_KEY, pin)) {
