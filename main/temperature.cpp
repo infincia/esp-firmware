@@ -277,7 +277,7 @@ void Temperature::task() {
                     ESP_LOGE(TAG, "setHeaterState: %s", esp_err_to_name(err));
             }
         }
-        vTaskDelay(3000 / portTICK_RATE_MS);
+        vTaskDelay(30 / portTICK_RATE_MS);
     }
 }
 
