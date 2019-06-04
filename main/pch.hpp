@@ -61,6 +61,12 @@
 #include <nvs_flash.h>
 #include <tcpip_adapter.h>
 
+#include "lwip/err.h"
+#include "lwip/sockets.h"
+#include "lwip/sys.h"
+#include "lwip/netdb.h"
+#include "lwip/dns.h"
+
 /**
  * Drivers
  *
