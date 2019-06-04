@@ -9,6 +9,7 @@
 
 #define TEXT_BUFFSIZE 1024
 
+#include <esp_timer.h>
 
 class Temperature {
 public:
@@ -21,7 +22,7 @@ public:
 	void task();
     void start(std::string& device_name);
 
-private:
+
     TaskHandle_t temperature_task_handle;
 
 	i2c_port_t port;
@@ -34,7 +35,8 @@ private:
 
 	std::string device_name;
 
-	bool update();
+    esp_timer_handle_t timer;
+    esp_timer_create_args_t timer_args;
 
 #if defined(CONFIG_FIRMWARE_TEMPERATURE_HTTP_ENDPOINT)
     void send_http();
