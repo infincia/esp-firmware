@@ -42,8 +42,7 @@ _update_url(update_manifest_url) {
 
     err = esp_ota_begin(update_partition, OTA_SIZE_UNKNOWN, &_update_handle);
     if (err != ESP_OK) {
-        const char* msg = error_string(err);
-        ESP_LOGE(TAG, "esp_ota_begin failed: %s", msg);
+        ESP_LOGE(TAG, "esp_ota_begin failed: %s", esp_err_to_name(err));
         throw std::runtime_error("esp_ota_begin failed");
     }
  }
@@ -54,8 +53,7 @@ Update::~Update() {
 
     err = esp_ota_end(_update_handle);
     if (err != ESP_OK) {
-        const char* msg = error_string(err);
-        ESP_LOGE(TAG, "esp_ota_end failed: %s", msg);
+        ESP_LOGE(TAG, "esp_ota_end failed: %s", esp_err_to_name(err));
         return;
     }
 
@@ -63,8 +61,7 @@ Update::~Update() {
 
     err = esp_ota_set_boot_partition(update_partition);
     if (err != ESP_OK) {
-        const char* msg = error_string(err);
-        ESP_LOGE(TAG, "boot select error: %s", msg);
+        ESP_LOGE(TAG, "boot select error: %s", esp_err_to_name(err));
     }   
 
     ESP_LOGI(TAG, "update successful, restarting");
@@ -166,8 +163,7 @@ void Update::check() {
         http_client.set_read_cb([&] (const char* buf, int length) {
             err = esp_ota_write(_update_handle, buf, length);
             if (err != ESP_OK) {
-                const char* msg = error_string(err);
-                ESP_LOGD(TAG, "esp_ota_write: %s", msg);
+                ESP_LOGD(TAG, "esp_ota_write: %s", esp_err_to_name(err));
             }
             binary_file_length += length;
             ESP_LOGD(TAG, "written %d", binary_file_length);
