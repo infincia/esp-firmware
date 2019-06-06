@@ -193,12 +193,6 @@ R"=====(
                 </select>
             </div>
 
-            <div class="button-panel">
-                <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
-                <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
-                <button class="value" name="restart" id='restart' mozactionhint="restart" onclick="restart();">Restart</button>
-
-            </div>
             <div class="panel bordered" id="homekit-panel">
                     <span class="title">Homekit</span>
                     <span class="value" type="text" id='pin'></span>
@@ -210,6 +204,12 @@ R"=====(
                     <div class="volume" type="text" id='volume'></div>
                     <div class="volume-up" name="volume-up" onclick="volume_up();">+</div>
                 </div>
+            </div>
+           
+            <div class="button-panel">
+                <button class="value" name="save" id='save' mozactionhint="save" onclick="save_provision();">Save</button>
+                <button class="value" name="identify" id='identify' mozactionhint="identify" onclick="identify();">Identify</button>
+                <button class="value" name="restart" id='restart' mozactionhint="restart" onclick="restart();">Restart</button>
             </div>
         </div>
         <div class="content">
