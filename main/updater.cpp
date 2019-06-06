@@ -76,7 +76,7 @@ void Updater::task() {
 
 
     while (true) {
-        ESP_LOGI(TAG, "checking for update");
+        ESP_LOGV(TAG, "checking for update");
 
         this->update();
 
