@@ -56,7 +56,7 @@ void Homekit::start(std::string& device_name, std::string& device_type, std::str
     this->device_type = device_type;
     this->device_id = device_id;
     
-    xTaskCreate(&task_wrapper, "homekit_task", 16384, this, (tskIDLE_PRIORITY + 10), &this->homekit_task_handle);
+    xTaskCreate(&task_wrapper, "homekit_task", 20000, this, (tskIDLE_PRIORITY + 10), &this->homekit_task_handle);
 }
 
 
