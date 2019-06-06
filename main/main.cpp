@@ -415,7 +415,7 @@ static void device_setup_task(void *param) {
 
     xEventGroupSetBits(provisioning_event_group, PROVISIONED_BIT);
 
-    ESP_LOGD(_TAG, "setup task done");
+    ESP_LOGI(_TAG, "setup done");
 
     vTaskDelete(NULL);
 }
