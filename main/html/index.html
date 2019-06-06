@@ -73,7 +73,13 @@ R"=====(
             max-width: 80%;
         }
 
-        #homekit-panel {
+        #homekit-panel,
+        #heater-enable-panel,
+        #heater-level-panel,
+        #heater-level,
+        #heater-state,
+        #temp,
+        #humidity {
             display: none;
         }
 
@@ -160,7 +166,7 @@ R"=====(
                 </select>
             </div>
 
-            <div class="panel bordered">
+            <div class="panel bordered" id="heater-enable-panel">
                 <span class="title">Heater Enable</span>
     
                 <select class="value" name="heater-state" id='heater-state' mozactionhint="save" onchange="save_heater();">
@@ -169,7 +175,7 @@ R"=====(
                 </select>
             </div>
 
-            <div class="panel bordered">
+            <div class="panel bordered" id="heater-level-panel">
                 <span class="title">Heater Level</span>
         
                 <select class="value" name="heater-level" id='heater-level' mozactionhint="save" onchange="save_heater();">
@@ -266,6 +272,16 @@ R"=====(
 
                 if (json.t === "amp") {
                     document.getElementById('volume-panel').style.display = "block";
+                }
+
+                if (json.t === "sensor") {
+                    document.getElementById('heater-level-panel').style.display = "block";
+                    document.getElementById('heater-enable-panel').style.display = "block";
+                    document.getElementById('heater-level').style.display = "block";
+                    document.getElementById('heater-state').style.display = "block";
+                    document.getElementById('temp').style.display = "block";
+                    document.getElementById('humidity').style.display = "block";
+
                 }
             });
         }
