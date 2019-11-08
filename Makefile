@@ -5,8 +5,6 @@
 
 PROJECT_NAME := firmware
 
-FIRMWARE_VERSION := $(shell git describe --always --tags --abbrev=0)
-F := $(shell echo "\#include \"pch.hpp\"\n\nconst char *FIRMWARE_VERSION = \"$(FIRMWARE_VERSION)\";" > main/version.cpp)
 WIFI_SSID := $(FIRMWARE_WIFI_SSID)
 WIFI_PASSWORD := $(FIRMWARE_WIFI_PASSWORD)
 
