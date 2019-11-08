@@ -96,7 +96,13 @@ static esp_err_t handle_get_status(httpd_req_t *req) {
 
     json.setInt("f", free_heap);
     json.setInt("m", min_free_heap);
-    json.setString("v", FIRMWARE_VERSION);
+    auto v = esp_ota_get_app_description();
+
+    json.setString("v", v->version);
+    json.setString("iv", v->idf_ver);
+    json.setString("d", v->date);
+    json.setString("ti", v->time);
+
     json.setInt("vol", instance->volume);
     json.setDouble("t", instance->temperature); 
     json.setDouble("h", instance->humidity); 
