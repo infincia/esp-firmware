@@ -82,9 +82,10 @@ void Update::check() {
 
     long timeout = 5000;
 
+    auto v = esp_ota_get_app_description();
 
     char user_agent[32];
-    snprintf(user_agent, sizeof(user_agent), "%s/%s", this->_device_name.c_str(), FIRMWARE_VERSION);
+    snprintf(user_agent, sizeof(user_agent), "%s/%s", this->_device_name.c_str(), v->version);
 
 
 
@@ -140,9 +141,9 @@ void Update::check() {
 
 
     try {
-        ESP_LOGI(TAG, "current git version: %s", FIRMWARE_VERSION);
+        ESP_LOGI(TAG, "current git version: %s", v->version);
 
-        Semver current_version(FIRMWARE_VERSION);
+        Semver current_version(v->version);
         ESP_LOGI(TAG, "current version: %s", current_version.string().c_str());
 
         Semver available_version(available_version_s);
