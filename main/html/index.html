@@ -224,6 +224,10 @@ R"=====(
                 <span id='temp'></span>
                 <span id='humidity'></span>
                 <span id='version'></span>
+                <span id='idf-version'></span>
+                <span id='date'></span>
+                <span id='time'></span>
+
                 <br/>
                 <span id='free'></span>
                 <span id='min'></span>
@@ -245,6 +249,12 @@ R"=====(
                 document.getElementById('free').innerText = `Free: ${(json.f / 1024.0).toFixed(2)}K`;
                 document.getElementById('min').innerText = `Min: ${(json.m / 1024.0).toFixed(2)}K`;
                 document.getElementById('version').innerText = `Version: ${json.v}`;
+                document.getElementById('idf-version').innerText = `IDF version: ${json.iv}`;
+
+                document.getElementById('date').innerText = `Compile date: ${json.d}`;
+
+                document.getElementById('time').innerText = `Compile time: ${json.ti}`;
+
                 document.getElementById('volume').innerText = `${json.vol}`;
                 document.getElementById('temp').innerText = `${json.t.toFixed(1)}F`;
                 document.getElementById('humidity').innerText = `${json.h.toFixed(1)}%`;
@@ -281,6 +291,12 @@ R"=====(
                     document.getElementById('heater-state').style.display = "block";
                     document.getElementById('temp').style.display = "block";
                     document.getElementById('humidity').style.display = "block";
+                    document.getElementById('version').style.display = "block";
+                    document.getElementById('idf-version').style.display = "block";
+
+                    document.getElementById('date').style.display = "block";
+                    document.getElementById('time').style.display = "block";
+
 
                 }
             });
